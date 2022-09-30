@@ -1,0 +1,14 @@
+{
+  "resourceName": "journeytable",
+  "tableName": "journeytable",
+  "partitionKey": {
+    "fieldName": "journeyId",
+    "fieldType": "string"
+  },
+  "sortKey": {
+    "fieldName": "createdAt",
+    "fieldType": "string"
+  },
+  "gsi": [],
+  "triggerFunctions": []
+}
