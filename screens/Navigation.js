@@ -12,55 +12,60 @@ import Login from './Login';
 import ForgotPassword from "../components/ForgotPassword";
 import ResetPassword from "../components/ResetPassword";
 import useAppContext from '../store/userContext';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 const Navigation = () => {
-  const [currentuser, setCurrentuser] = React.useState(null);
+  const [currentuser, setCurrentuser] = React.useState(true);
   const { setUser  } = useAppContext();
   const checkuser = async () => {
-    const user = await Auth.currentAuthenticatedUser({ bypassCache: true });
-    setCurrentuser(user);
-    setUser(user);
+    try{
+      const user = await Auth.currentAuthenticatedUser({ bypassCache: true });
+      setCurrentuser(user);
+      setUser(user);
+    } catch(err) {
+      console.log(err)
+      setCurrentuser(null);
+      setUser(null);
+    }
   }
 
   React.useEffect(() => {
     checkuser();
   }, [])
 
-  if(currentuser === null) {
-    return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <ActivityIndicator/>
-      </View>
-    )
-  }
+
 
   const Stack = createNativeStackNavigator();
+  const Tab = createMaterialTopTabNavigator();
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false
-        }}
-      >
-        {currentuser ?  (
-          <>
 
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="Journal" component={Journal} />
-            <Stack.Screen name="CreateNote" component={CreateNote} />
+      {currentuser ?  (
+        <Tab.Navigator
+          screenOptions={{
+            headerShown: false
+          }}
+        >
+          <Tab.Screen name="CreateNote" component={CreateNote} />
+          <Tab.Screen name="Home" component={Home} />
+          <Tab.Screen name="Journal" component={Journal} />
           
-          </>
-        )
-          : (
-            <>
-              <Stack.Screen name="Login" component={Login} />
-              <Stack.Screen name="ConfirmationEmail" component={ConfirmationEmail} />
-              <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-              <Stack.Screen name="ResetPassword" component={ResetPassword} />
-            </>
-          )}
+        </Tab.Navigator>
+      )
+        : (
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false
+            }}
+          >
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="ConfirmationEmail" component={ConfirmationEmail} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+            <Stack.Screen name="ResetPassword" component={ResetPassword} />
+          </Stack.Navigator>
+        )}
     
-      </Stack.Navigator>
+      
     </NavigationContainer>
   )
 }

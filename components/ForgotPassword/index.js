@@ -16,7 +16,8 @@ const ForgotPassword = () => {
         Auth.forgotPassword(email)
           .then(() => {
             setLoading(false);
-            alert('Password reset successfully');
+            alert('Verification code sent to your email');
+            navigator.navigate('ResetPassword', {email});
           }).catch((err) => {
             setLoading(false);
             alert(err.message);
@@ -24,7 +25,6 @@ const ForgotPassword = () => {
       }catch(err){
         setLoading(false);
         alert(err.message);
-        navigator.navigate('ResetPassword', {email});
       }
     }
   

@@ -79,7 +79,6 @@ app.get(path , function(req, res) {
 
 
 
-
   let queryParams = {
     TableName: tableName,
     KeyConditions: condition

@@ -5,6 +5,7 @@ export const initialState = {
 };
 
 const userReducer = (state =initialState , action) => {
+
   switch (action.type) {
   case "SET_USER":
     return {
@@ -29,12 +30,13 @@ const userReducer = (state =initialState , action) => {
   case "GET_JOURNEY_BY_USER_LOADING":
     return {
       ...state,
-      getJourneyLoading: action.getJourneyLoading
+      getJourneyLoadingState: action.getJourneyLoadingState
     }
   case "GET_JOURNEY_BY_USER":
+    console.log('first', action.journeys)
     return {
       ...state,
-      journey: action.journey
+      journeys: action.journeys
     }
   case "UPDATE_JOURNEY_LOADING":
     return {

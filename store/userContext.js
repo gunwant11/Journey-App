@@ -37,10 +37,10 @@ export const UserProvider = ({children})=>{
     });
   };
 
-  const createJourneyLoading = (createJourneyLoading) => {
+  const createJourneyLoading = (createJourneyLoadingState) => {
     dispatch({
       type: userActionTypes.CREATE_JOURNEY_LOADING,
-      createJourneyLoading
+      createJourneyLoadingState
     })
 
   }
@@ -71,20 +71,20 @@ export const UserProvider = ({children})=>{
 
   } 
 
-  const getJourneyLoading = (getJourneyLoading) =>{
+  const getJourneyLoading = (getJourneyLoadingState) =>{
     dispatch({
       type: userActionTypes.GET_JOURNEY_BY_USER_LOADING,
-      getJourneyLoading
+      getJourneyLoadingState
     })
   }
 
   const getJourney = async () =>{
     try{
       getJourneyLoading(true);
-      const journey = await API.get('journeyapp', `/user/${state.user.username}`)
+      const journeys = await API.get('journeyapp', `/user/${state.user.username}`)
       dispatch({
         type: userActionTypes.GET_JOURNEY_BY_USER,
-        journey
+        journeys
       })
       getJourneyLoading(false);
     }catch(err){
@@ -173,7 +173,7 @@ const useAppContext = () => {
     throw new Error("useContext must be used within UserContext")
   }
   
-  return context
+  return context;
 }
   
 export default useAppContext;

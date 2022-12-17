@@ -35,9 +35,6 @@ const ResetPassword = () => {
     }
   }
 
-
-
-
   return <Center w="100%" backgroundColor='info.600'>
     <Box  p="2" py="8" w="90%" minH="full" maxW="400">
       <Heading size="lg" fontWeight="600" color="white" >

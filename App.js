@@ -14,9 +14,6 @@ Amplify.configure({  ...awsconfig,  Analytics: {disabled: true,}, API: { endpoin
 
 API.configure(awsconfig);
 
-
-
-
 // 291440
 function App() {
 
@@ -36,7 +33,6 @@ function App() {
         400:  "#424E72",
         500:  "#224166",
         600: "#1C2E52"
-    
       }
     }, 
     fontConfig: {
