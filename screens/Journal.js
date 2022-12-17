@@ -3,7 +3,7 @@ import { Box, Center, Heading, Text, VStack } from 'native-base';
 import useAppContext from '../store/userContext';
 import { useEffect } from 'react';
 
-const Journal = () => {
+export const Journal = () => {
 
   const { getJourney, getJourneyLoadingState   } = useAppContext();
   // journeys reducer
@@ -63,4 +63,3 @@ const Journal = () => {
   )
 }
 
-export default Journal

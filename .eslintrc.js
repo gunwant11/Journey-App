@@ -20,6 +20,7 @@ module.exports = {
     "react-native"
   ],
   "rules": {
+    "no-unused-vars": "warn",
     "indent": ["error", 2, {
       "ignoredNodes": ["TemplateLiteral"]
     }],

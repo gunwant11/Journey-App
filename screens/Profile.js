@@ -1,9 +1,8 @@
+import { Text } from 'native-base'
 import React from 'react'
-import InnerComponent from '../components/Home'
-const Profile = () => {
+export const Profile = () => {
   return (
-    <div>Profile</div>
+    <Text>Profile</Text>
   )
 }
 
-export default Profile

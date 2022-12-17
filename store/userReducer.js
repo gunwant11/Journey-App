@@ -1,5 +1,7 @@
 export const initialState = {
-  user: null,
+  user: {
+    username: null
+  },
   confirmationEmail:'gunwant7272@gmail.com',
 
 };

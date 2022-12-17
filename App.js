@@ -1,10 +1,11 @@
 import { extendTheme, NativeBaseProvider,  } from "native-base";
 import React from 'react';
 import { Amplify, API } from 'aws-amplify'
-import awsconfig from './src/aws-exports'
+import awsconfig from './src/aws-exports.js'
 import Navigation from "./screens/Navigation";
 import { UserProvider } from "./store/userContext";
 import { useFonts } from 'expo-font';
+import { ActivityIndicator } from "react-native";
 Amplify.configure({  ...awsconfig,  Analytics: {disabled: true,}, API: { endpoints: [ { 
   name: "journeyapp", 
   endpoint: "https://66wbbuf0j5.execute-api.ap-south-1.amazonaws.com/dev/", 
@@ -58,6 +59,9 @@ function App() {
     },
   });
 
+  if(!loaded){
+    return <ActivityIndicator/>
+  }
 
 
 

@@ -4,15 +4,17 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActivityIndicator } from 'react-native-web';
 import { View } from 'native-base';
 import {  Auth } from 'aws-amplify';
-import Home from "./Home";
-import Journal from "./Journal";
-import CreateNote from "../components/createNote";
-import ConfirmationEmail from "../components/ConfirmationEmail";
+import {Journal} from "./Journal";
+import CreateNote from "../components/CreateNote";
+import ConfirmationEmail from "../components/AuthComponents/ConfirmationEmail";
 import Login from './Login';
-import ForgotPassword from "../components/ForgotPassword";
-import ResetPassword from "../components/ResetPassword";
+import ForgotPassword from "../components/AuthComponents/ForgotPassword";
+import ResetPassword from "../components/AuthComponents/ResetPassword";
 import useAppContext from '../store/userContext';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { Home } from './Home';
+import { Profile } from './Profile';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Octicons'
 
 const Navigation = () => {
   const [currentuser, setCurrentuser] = React.useState(true);
@@ -36,19 +38,57 @@ const Navigation = () => {
 
 
   const Stack = createNativeStackNavigator();
-  const Tab = createMaterialTopTabNavigator();
+  const Tab = createBottomTabNavigator();
   return (
     <NavigationContainer>
 
       {currentuser ?  (
         <Tab.Navigator
           screenOptions={{
-            headerShown: false
+            headerShown: false,
+            tabBarShowLabel: false,
+            tabBarStyle:{
+              position: 'absolute',
+              bottom: 25,
+              left: 20,
+              right:20,
+              elevation: 0,
+              backgroundColor: "#fff",
+              borderRadius: 20,
+              height: 60
+            }
           }}
+          
         >
-          <Tab.Screen name="CreateNote" component={CreateNote} />
-          <Tab.Screen name="Home" component={Home} />
-          <Tab.Screen name="Journal" component={Journal} />
+          <Tab.Screen
+            options={{
+              tabBarIcon: ({focused})=>(
+                <Icon name='home' size={25} color={focused ? "#000" : "#c2c2c2" }/>
+              )
+            }}
+            name="Home" component={Home} />
+          <Tab.Screen name="CreateNote" 
+            options={{
+              tabBarIcon: ({focused})=>(
+                <Icon name='plus-circle' size={25} color={focused ? "#000" : "#c2c2c2" }/>
+              )
+            }}
+            component={CreateNote} />
+          <Tab.Screen
+          
+            options={{
+              tabBarIcon: ({focused})=>(
+                <Icon name='book' size={25} color={focused ? "#000" : "#c2c2c2" }/>
+              )
+            }}
+            name="Journal" component={Journal} />
+          <Tab.Screen
+            options={{
+              tabBarIcon: ({focused})=>(
+                <Icon name='gear' size={25} color={focused ? "#000" : "#c2c2c2" }/>
+              )
+            }}
+            name="Profile" component={Profile} />
           
         </Tab.Navigator>
       )
@@ -62,6 +102,7 @@ const Navigation = () => {
             <Stack.Screen name="ConfirmationEmail" component={ConfirmationEmail} />
             <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
             <Stack.Screen name="ResetPassword" component={ResetPassword} />
+            <Stack.Screen name='Home' component={Home} />
           </Stack.Navigator>
         )}
     
