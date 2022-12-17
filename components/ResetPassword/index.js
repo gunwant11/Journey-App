@@ -13,27 +13,21 @@ const ResetPassword = ({email}) => {
 
   const handleSubmit = () => {
     setFormSubmitted(true);
+    console.log(loading)
     if(code && email && newPassword) {
-      try
-      {
+ 
         setLoading(true);
         Auth.forgotPasswordSubmit(email, code, newPassword)
           .then(() => {
             setLoading(false);
             alert('Password reset successfully');
-          }).catch((err) => {
+          })
+          .catch((err) => {
             setLoading(false);
             alert(err.message);
           })
-      }catch(err){
-        setLoading(false);
-        alert(err.message);
-        navigator.navigate('Login');
-      }
     }
   }
-
-
 
 
   return <Center w="100%" backgroundColor='info.600'>
