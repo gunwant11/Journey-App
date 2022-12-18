@@ -15,6 +15,11 @@ export const userActionTypes = {
   DELETE_JOURNEY_LOADING: "DELETE_JOURNEY_LOADING",
   UPDATE_JOURNEY: "UPDATE_JOURNEY",
   UPDATE_JOURNEY_LOADING: "UPDATE_JOURNEY_LOADING",
+  GET_JOURNEY_BY_CATEGORY: "GET_JOURNEY_BY_CATEGORY",
+  GET_JOURNEY_BY_CATEGORY_LOADING: "GET_JOURNEY_BY_CATEGORY_LOADING",
+  GET_CATEGORIES: "GET_CATEGORIES",
+  GET_CATEGORIES_LOADING: "GET_CATEGORIES_LOADING",
+
 }
 
 const UserContext = createContext(initialState);
@@ -45,7 +50,7 @@ export const UserProvider = ({children})=>{
 
   }
 
-  const createJourney = async ( title, description, content) =>{
+  const createJourney = async ( title, description, content, category) =>{
     const journeyId = uuidv4();
     try{
       createJourneyLoading(true)
@@ -55,6 +60,7 @@ export const UserProvider = ({children})=>{
           title,
           createdAt: Date.now().toString(),
           description,
+          category,
           content,
         }
       })
@@ -92,6 +98,47 @@ export const UserProvider = ({children})=>{
       console.log(err)
     }
   }
+
+  const getCategories = async () =>{
+    try{
+      const categories = await API.get('journeyapp', `/user/${state.user.username}/categories`)
+      dispatch({
+        type: userActionTypes.GET_CATEGORIES,
+        categories
+      })
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  const getCategoriesLoading = (getCategoriesLoading) =>{
+    dispatch({
+      type: userActionTypes.GET_CATEGORIES_LOADING,
+      getCategoriesLoading
+    })
+  }
+
+
+  const getJourneyByCategory = async (category) =>{
+    try{
+      const journeysByCategory = await API.get('journeyapp', `/user/${state.user.username}/categories/${category}`)
+      dispatch({
+        type: userActionTypes.GET_JOURNEY_BY_CATEGORY,
+        journeysByCategory
+      })
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  const getJourneyByCategoryLoading = (getJourneyByCategoryLoadingState) =>{
+    dispatch({
+      type: userActionTypes.GET_JOURNEY_BY_CATEGORY_LOADING,
+      getJourneyByCategoryLoadingState
+    })
+  }
+
+
 
 
   const deleteJourneyLoading = (deleteJourneyLoading) =>{
