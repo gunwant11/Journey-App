@@ -60,6 +60,28 @@ const userReducer = (state =initialState , action) => {
       ...state,
       deleteJourney: action.deleteJourney
     }
+    case "GET_JOURNEY_BY_CATEGORY":
+      return {
+        ...state,
+        journeysByCategory: action.journeysByCategory
+      }
+    case "GET_JOURNEY_BY_CATEGORY_LOADING":
+      return {
+        ...state,
+        getJourneyByCategoryLoadingState : action.getJourneyByCategoryLoadingState
+      }
+    case "GET_CATEGORIES":
+      return {
+        ...state,
+        categories: action.categories
+      }
+    case "GET_CATEGORIES_LOADING":
+      return {
+        ...state,
+        getCategoriesLoading: action.getCategoriesLoading
+
+      }
+      
 
   default:
     return state;

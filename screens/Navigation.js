@@ -5,7 +5,7 @@ import { ActivityIndicator } from 'react-native-web';
 import { View } from 'native-base';
 import {  Auth } from 'aws-amplify';
 import {Journal} from "./Journal";
-import CreateNote from "../components/CreateNote";
+
 import ConfirmationEmail from "../components/AuthComponents/ConfirmationEmail";
 import Login from './Login';
 import ForgotPassword from "../components/AuthComponents/ForgotPassword";
@@ -15,8 +15,10 @@ import { Home } from './Home';
 import { Profile } from './Profile';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Octicons'
+import AddNote from './AddNote';
 
 const Navigation = () => {
+
   const [currentuser, setCurrentuser] = React.useState(true);
   const { setUser  } = useAppContext();
   const checkuser = async () => {
@@ -49,13 +51,15 @@ const Navigation = () => {
             tabBarShowLabel: false,
             tabBarStyle:{
               position: 'absolute',
+              borderTopWidth: 0,
               bottom: 25,
               left: 20,
               right:20,
               elevation: 0,
-              backgroundColor: "#fff",
+              backgroundColor: "#1a1d21",
               borderRadius: 20,
-              height: 60
+              height: 60,
+              // ...styles.shadow
             }
           }}
           
@@ -63,29 +67,65 @@ const Navigation = () => {
           <Tab.Screen
             options={{
               tabBarIcon: ({focused})=>(
-                <Icon name='home' size={25} color={focused ? "#000" : "#c2c2c2" }/>
+                <View
+                style={{
+                  backgroundColor: focused ? "#cc4f4f" : "#1a1d21",
+                  borderRadius: 55,
+                  padding: 10,
+                }}
+                >
+                  <Icon name='home' size={25}  color={focused ? "#fff" : "#c2c2c2" }/>
+                </View>
               )
             }}
             name="Home" component={Home} />
-          <Tab.Screen name="CreateNote" 
+          <Tab.Screen name="AddNote" 
             options={{
               tabBarIcon: ({focused})=>(
-                <Icon name='plus-circle' size={25} color={focused ? "#000" : "#c2c2c2" }/>
+                <View 
+                style={{
+                  backgroundColor: focused ? "#cc4f4f" : "#1a1d21",
+                  borderRadius: 55,
+                  padding: 10,
+                }}
+                >
+                  <Icon name='plus-circle' size={25}  color={focused ? "#fff" : "#c2c2c2" }/>
+                </View>
               )
             }}
-            component={CreateNote} />
+            component={AddNote} />
           <Tab.Screen
           
             options={{
               tabBarIcon: ({focused})=>(
-                <Icon name='book' size={25} color={focused ? "#000" : "#c2c2c2" }/>
+                <View
+                style={{
+                  backgroundColor: focused ? "#cc4f4f" : "#1a1d21",
+                  borderRadius: 55,
+                  padding: 10,
+
+                }}
+                >
+                 
+                  <Icon name='book' size={25}  color={focused ? "#fff" : "#c2c2c2" }/>
+                </View>
               )
             }}
             name="Journal" component={Journal} />
           <Tab.Screen
             options={{
               tabBarIcon: ({focused})=>(
-                <Icon name='gear' size={25} color={focused ? "#000" : "#c2c2c2" }/>
+                <View
+                  style={{
+                    backgroundColor: focused ? "#cc4f4f" : "#1a1d21",
+                    borderRadius: 55,
+                    padding: 10,
+
+                  }}
+                >
+
+                  <Icon name='gear' size={25} color={focused ? "#fff" : "#c2c2c2" }/>
+                </View>
               )
             }}
             name="Profile" component={Profile} />
@@ -109,6 +149,19 @@ const Navigation = () => {
       
     </NavigationContainer>
   )
+}
+
+const styles = {
+  shadow: {
+    shadowColor: "#a5a5a5",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    elevation: 3,
+  }
 }
 
 export default Navigation

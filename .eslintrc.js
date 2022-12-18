@@ -21,6 +21,7 @@ module.exports = {
   ],
   "rules": {
     "no-unused-vars": "warn",
+    "no-inline-style": false,
     "indent": ["error", 2, {
       "ignoredNodes": ["TemplateLiteral"]
     }],
