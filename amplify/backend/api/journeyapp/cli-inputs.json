@@ -13,6 +13,19 @@
           "delete"
         ]
       }
+    },
+    "/user/{userId}/categories": {
+      "name": "/user/{userId}/categories",
+      "lambdaFunction": "journeyjs",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ]
+      }
     }
   }
 }

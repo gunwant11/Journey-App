@@ -19,6 +19,8 @@ export const userActionTypes = {
   GET_JOURNEY_BY_CATEGORY_LOADING: "GET_JOURNEY_BY_CATEGORY_LOADING",
   GET_CATEGORIES: "GET_CATEGORIES",
   GET_CATEGORIES_LOADING: "GET_CATEGORIES_LOADING",
+  GET_JOURNEY_BY_ID: "GET_JOURNEY_BY_ID",
+  GET_JOURNEY_BY_ID_LOADING: "GET_JOURNEY_BY_ID_LOADING",
 
 }
 
@@ -137,6 +139,30 @@ export const UserProvider = ({children})=>{
       getJourneyByCategoryLoadingState
     })
   }
+  // /user/{userId}/journey/{journeyId}
+  const getJourneyById = async (journeyId) =>{
+    try{
+      const journeyById = await API.get('journeyapp', `/user/${state.user.username}/journey/${journeyId}`)
+      dispatch({
+        type: userActionTypes.GET_JOURNEY_BY_CATEGORY,
+        journeyById
+      })
+      console.log(journeyById)
+      return journeyById 
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  const getJourneyByIdLoading = (getJourneyByIdLoadingState) =>{
+    dispatch({
+      type: userActionTypes.GET_JOURNEY_BY_CATEGORY_LOADING,
+      getJourneyByIdLoadingState
+    })
+  }
+
+
+
 
 
 
@@ -204,7 +230,13 @@ export const UserProvider = ({children})=>{
     deleteJourney,
     deleteJourneyLoading,
     updateJourney,
-    updateJourneyLoading
+    updateJourneyLoading,
+    getJourneyByCategory,
+    getJourneyByCategoryLoading,
+    getCategories,
+    getCategoriesLoading,
+    getJourneyById,
+    getJourneyByIdLoading
   };
 
 

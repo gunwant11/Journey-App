@@ -81,8 +81,16 @@ const userReducer = (state =initialState , action) => {
         getCategoriesLoading: action.getCategoriesLoading
 
       }
-      
-
+    case "GET_JOURNEY_BY_ID":
+      return {
+        ...state,
+        journeyById: action.journeyById
+      }
+    case "GET_JOURNEY_BY_ID_LOADING":
+      return {
+        ...state,
+        getJourneyByIdLoading: action.getJourneyByIdLoading
+      }
   default:
     return state;
   }

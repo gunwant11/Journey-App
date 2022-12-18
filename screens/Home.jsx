@@ -7,7 +7,7 @@ import FolderCard from '../components/FolderCard';
 
 export const Home = () => {
 
-  const { createJourney, getJourney } = useAppContext();
+  const { createJourney, getJourney,getJourneyById , getCategories  } = useAppContext();
   const createJourneyHandler = async () => {
     await createJourney('title111', 'description111', 'content1')
   }
@@ -15,6 +15,18 @@ export const Home = () => {
   const getJourneyHandler = async () => {
     await getJourney()
   }
+
+   const getJourneyByIdHandler = async () => {
+    await getJourneyById("7bb9876e-84bd-4bbb-97f7-c667e5463212")
+  }
+
+
+
+
+  useEffect(() => {
+    getJourneyById("7bb9876e-84bd-4bbb-97f7-c667e5463212")
+  }, [])
+
 
 
   return (

@@ -13,6 +13,12 @@
       "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-newjourneyapp-dev-231323-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
     },
     "categories": {
+      "auth": {
+        "newJourneyApp": {}
+      },
+      "storage": {
+        "journeytable": {}
+      },
       "function": {
         "newtesting": {
           "deploymentBucketName": "amplify-newjourneyapp-dev-231323-deployment",
@@ -20,11 +26,11 @@
         },
         "journeyjs": {
           "deploymentBucketName": "amplify-newjourneyapp-dev-231323-deployment",
-          "s3Key": "amplify-builds/journeyjs-39364c55542f46504e37-build.zip"
+          "s3Key": "amplify-builds/journeyjs-70376f63425779306141-build.zip"
         }
       },
-      "auth": {
-        "newJourneyApp": {}
+      "api": {
+        "journeyapp": {}
       }
     }
   }
