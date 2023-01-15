@@ -49,6 +49,7 @@ const Navigation = () => {
           screenOptions={{
             headerShown: false,
             tabBarShowLabel: false,
+      
             tabBarStyle:{
               position: 'absolute',
               borderTopWidth: 0,
@@ -80,7 +81,16 @@ const Navigation = () => {
             }}
             name="Home" component={Home} />
           <Tab.Screen name="AddNote" 
+          navigationOptions={{
+            headerVisible: false,
+            bottomNavigationOptions: {
+              visible: false,
+            },
+          }}
+
             options={{
+              headerShown: false,
+              tabBarVisible: false,
               tabBarIcon: ({focused})=>(
                 <View 
                 style={{
@@ -106,7 +116,6 @@ const Navigation = () => {
 
                 }}
                 >
-                 
                   <Icon name='book' size={25}  color={focused ? "#fff" : "#c2c2c2" }/>
                 </View>
               )

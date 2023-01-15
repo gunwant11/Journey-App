@@ -1,9 +1,11 @@
 import { createContext, useContext } from "react";
 import userReducer, { initialState } from "./userReducer";
 import React from "react";
+import 'react-native-get-random-values';
 import { useReducer } from "react";
 import { API } from 'aws-amplify';
 import { v4 as uuidv4 } from 'uuid';
+import { Toast } from 'native-base';
 export const userActionTypes = {
   SET_CONFIRMATION_EMAIL: "SET_CONFIRMATION_EMAIL",
   SET_USER: "SET_USER",
@@ -21,10 +23,35 @@ export const userActionTypes = {
   GET_CATEGORIES_LOADING: "GET_CATEGORIES_LOADING",
   GET_JOURNEY_BY_ID: "GET_JOURNEY_BY_ID",
   GET_JOURNEY_BY_ID_LOADING: "GET_JOURNEY_BY_ID_LOADING",
+  ADD_CATEGORY: "ADD_CATEGORY",
 
 }
 
 const UserContext = createContext(initialState);
+
+const handleNotification = (message, type) => {
+  let backgroundColor = "#000";
+  if(type === "success") backgroundColor = "#00b894";
+  if(type === "error") backgroundColor = "#d63031";
+  if(type === "warning") backgroundColor = "#fdcb6e";
+
+  Toast.show({
+    title: type,
+    description: message,
+    placement: "top",
+    duration: 3000,
+    variant: "solid",
+    isClosable: true,
+    style: {
+      backgroundColor,
+      borderRadius: 10,
+      padding: 15,
+      margin: 10,
+      width: "100%",
+      alignSelf: "center",
+    },
+  })
+}
 
 
 export const UserProvider = ({children})=>{
@@ -52,7 +79,7 @@ export const UserProvider = ({children})=>{
 
   }
 
-  const createJourney = async ( title, description, content, category) =>{
+  const createJourney = async ( title, description, content, descHTML,category , callback) =>{
     const journeyId = uuidv4();
     try{
       createJourneyLoading(true)
@@ -62,6 +89,7 @@ export const UserProvider = ({children})=>{
           title,
           createdAt: Date.now().toString(),
           description,
+          descHTML,
           category,
           content,
         }
@@ -71,12 +99,16 @@ export const UserProvider = ({children})=>{
         createdJourney
       })
       createJourneyLoading(false)
+      if(callback) callback()
+
+       handleNotification("Journey created successfully", "success")
+
+
     } catch (err) {
       createJourneyLoading(false)
       console.log(err)
+      handleNotification("Error creating journey", "error")
     }
-
-
   } 
 
   const getJourneyLoading = (getJourneyLoadingState) =>{
@@ -103,14 +135,36 @@ export const UserProvider = ({children})=>{
 
   const getCategories = async () =>{
     try{
-      const categories = await API.get('journeyapp', `/user/${state.user.username}/categories`)
+      if(state.user === null || state.user.username === null ) return
+      const categories = await API.get('journeyapp', `/categories`)
+
+         const unique = categories.categories.reduce((acc, journey) => {
+            if (!journey) return acc;
+           const category = journey;
+           const categoryObj = acc.find(obj => obj.category === category);
+           if (categoryObj) {
+             categoryObj.count++;
+           } else {
+             acc.push({category, count: 1});
+           }
+           
+           return acc;
+         }, []);
       dispatch({
         type: userActionTypes.GET_CATEGORIES,
-        categories
+        categories: unique
       })
     }catch(err){
       console.log(err)
     }
+  }
+
+
+  const addCategory = (category) =>{
+    dispatch({
+      type: userActionTypes.ADD_CATEGORY,
+      category
+    })
   }
 
   const getCategoriesLoading = (getCategoriesLoading) =>{
@@ -123,7 +177,7 @@ export const UserProvider = ({children})=>{
 
   const getJourneyByCategory = async (category) =>{
     try{
-      const journeysByCategory = await API.get('journeyapp', `/user/${state.user.username}/categories/${category}`)
+      const journeysByCategory = await API.get('journeyapp', `/categories?category=${category}`)
       dispatch({
         type: userActionTypes.GET_JOURNEY_BY_CATEGORY,
         journeysByCategory
@@ -140,7 +194,7 @@ export const UserProvider = ({children})=>{
     })
   }
   // /user/{userId}/journey/{journeyId}
-  const getJourneyById = async (journeyId) =>{
+  const getJourneyById = async (journeyId ) =>{
     try{
       const journeyById = await API.get('journeyapp', `/user/${state.user.username}/journey/${journeyId}`)
       dispatch({
@@ -162,11 +216,6 @@ export const UserProvider = ({children})=>{
   }
 
 
-
-
-
-
-
   const deleteJourneyLoading = (deleteJourneyLoading) =>{
     dispatch({
       type: userActionTypes.DELETE_JOURNEY_LOADING,
@@ -174,19 +223,32 @@ export const UserProvider = ({children})=>{
     })
   }
 
+// /user/{userId}/{params}
 
-  const deleteJourney = async (journeyId) =>{
+// partation key and sort key
+  const deleteJourney = async (journeyId, createdAt, callback  ) =>{
+    const myInit = {
+      body: {
+        journeyId,
+        createdAt
+      }
+    }
+
     try{
       deleteJourneyLoading(true)
-      const deletedJourney = await API.del('journeyapp', `/user/${state.user.username}/${journeyId}`)
+      const deletedJourney = await API.del('journeyapp', `/user/${state.user.username}/${journeyId}`, myInit)
       dispatch({
         type: userActionTypes.DELETE_JOURNEY,
         deletedJourney
       })
       deleteJourneyLoading(false)
+      console.log('deleted Journey' +deletedJourney )
+      handleNotification("Journey deleted successfully", "success")
+      if(callback) callback()
     }catch(err){
       deleteJourneyLoading(false)
       console.log(err)
+      handleNotification("Journey not deleted", "error")
     }
   }
 
@@ -212,15 +274,21 @@ export const UserProvider = ({children})=>{
         updatedJourney
       })
       updateJourneyLoading(false)
+      handleNotification('Journey Updated', 'success')
     }catch(err){
       updateJourneyLoading(false)
       console.log(err)
+      handleNotification('Journey Update Failed', 'error')
     }
   }
 
   const value = {
     user: state.user,
     confirmationEmail: state.confirmationEmail,
+    journeys: state.journeys,
+    categories: state.categories,
+    journeysByCategory: state.journeysByCategory,
+    journeyById: state.journeyById,
     setUser,
     setConfirmationEmail,
     createJourneyLoading,
@@ -236,7 +304,8 @@ export const UserProvider = ({children})=>{
     getCategories,
     getCategoriesLoading,
     getJourneyById,
-    getJourneyByIdLoading
+    getJourneyByIdLoading,
+    addCategory
   };
 
 

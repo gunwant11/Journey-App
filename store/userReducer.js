@@ -3,6 +3,26 @@ export const initialState = {
     username: null
   },
   confirmationEmail:'gunwant7272@gmail.com',
+  createJourneyLoading: false,
+  createdJourney: null,
+  getJourneyLoadingState: false,
+  getJourney: null,
+  categories: null,
+  getJourneyByIdLoading: false,
+  getJourneyByCategoryLoadingState: false,
+  getJourneyByCategory: null,
+  getCategoriesLoadingState: false,
+  getCategories: null,
+  deleteJourneyLoadingState: false,
+  deleteJourney: null,
+  updateJourneyLoading: false,
+  updateJourney: null,
+  journeys: null,
+  journeysByCategory: null,
+  journeyById: null,
+
+
+
 
 };
 
@@ -35,7 +55,6 @@ const userReducer = (state =initialState , action) => {
       getJourneyLoadingState: action.getJourneyLoadingState
     }
   case "GET_JOURNEY_BY_USER":
-    console.log('first', action.journeys)
     return {
       ...state,
       journeys: action.journeys
@@ -63,7 +82,7 @@ const userReducer = (state =initialState , action) => {
     case "GET_JOURNEY_BY_CATEGORY":
       return {
         ...state,
-        journeysByCategory: action.journeysByCategory
+        journeys: action.journeysByCategory.items
       }
     case "GET_JOURNEY_BY_CATEGORY_LOADING":
       return {
@@ -79,6 +98,14 @@ const userReducer = (state =initialState , action) => {
       return {
         ...state,
         getCategoriesLoading: action.getCategoriesLoading
+
+      }
+    case "ADD_CATEGORY":
+      return {
+        ...state,
+        categories: [...state.categories, {
+            category : action.category,
+          }]
 
       }
     case "GET_JOURNEY_BY_ID":

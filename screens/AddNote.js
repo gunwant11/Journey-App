@@ -1,23 +1,78 @@
-import { useRef, useState } from "react";
+import { Box, Button, FormControl, HStack, Input, Modal, ScrollView, Select, Text, VStack, View } from "native-base";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   Pressable,
   SafeAreaView,
   StyleSheet,
-  Text,
   TouchableOpacity,
-  View
+
 } from "react-native";
 import {
   actions,
   RichEditor,
   RichToolbar
 } from "react-native-pell-rich-editor";
+import Icon from "react-native-vector-icons/AntDesign";
+import moment from "moment";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import useAppContext from "../store/userContext";
+import Icon2 from "react-native-vector-icons/FontAwesome";
 
 export default function AddNote() {
   const richText = useRef();
 
+  const navigation = useNavigation();
+  const route = useRoute()
+  const { createJourney, addCategory, getCategories, categories, getJourneyById, journeyById, updateJourney, updateJourneyLoading, deleteJourney, deleteJourneyLoadingState, getJourney } = useAppContext();
   const [descHTML, setDescHTML] = useState("");
   const [showDescError, setShowDescError] = useState(false);
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("Personal");
+  const [date, setDate] = useState(moment().format("DD MMMM YYYY"));
+
+
+  const selectedJourney = route?.params?.selectedJourney;
+
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const initialRef = React.useRef(null);
+  const finalRef = React.useRef(null);
+  const [newCategory, setNewCategory] = useState("");
+  const [selectedJourneyId, setSelectedJourneyId] = useState();
+
+  const [currentJourney, setCurrentJourney] = useState();
+ 
+
+  useEffect( () => {
+    getCategories();
+    if (route.params?.selectedJourney) {
+      setCurrentJourney(selectedJourney)
+      setTitle(selectedJourney.title);
+      setDescHTML(selectedJourney?.descHTML);
+      setCategory(selectedJourney?.category);
+      setSelectedJourneyId(selectedJourney.journeyId);
+      if(selectedJourney.descHTML)
+      richText.current?.setContentHTML(selectedJourney.descHTML);
+      setDate((selectedJourney?.createdAt));
+    }
+
+    return () => {
+      setDescHTML("");
+      setTitle("");
+      setCategory("Personal");
+      setDate(moment().format("DD MMMM YYYY"));
+    }
+
+  }, [route]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+      tabBarVisible: false,
+    })
+  }, [navigation])
+
+
+
 
   const richTextHandle = (descriptionText) => {
     if (descriptionText) {
@@ -37,43 +92,143 @@ export default function AddNote() {
       setShowDescError(true);
     } else {
       // send data to your server!
+      const description = replaceWhiteSpace.slice(0, 100);
+      createJourney(title, description, replaceWhiteSpace, descHTML, category, () => {
+        console.log("journey created");
+      });
+
     }
   };
 
+  // const handleClear = () => {
+  //   try {
+  //     console.log(richText.current)
+  //   }
+  //   catch (err) {
+  //     console.log(err)
+  //   }
+  // };
+
+  const handleDelete = () => {
+    deleteJourney(selectedJourneyId,date,()=>{
+      getJourney();
+      navigation.navigate("Journal");
+    } )
+  }
+
+
+
+
   return (
     <SafeAreaView edges={["bottom", "left", "right"]} style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <Pressable onPress={() => richText.current?.dismissKeyboard()}>
-          <Text style={styles.headerStyle}>Your awesome Content</Text>
-          {/* <View style={styles.htmlBoxStyle}>
-            <Text>{descHTML}</Text>
-          </View> */}
-        </Pressable>
-        <View style={styles.richTextContainer}>
-          <RichEditor
-            ref={richText}
-            onChange={richTextHandle}
-            placeholder="Write your cool content here :)"
-            androidHardwareAccelerationDisabled={true}
-            style={styles.richTextEditorStyle}
-            initialHeight={250}
-          />
+      <View px={5} mt={10} h='full' width='100%' >
+        <HStack justifyContent="space-between" alignItems="center" w="full"  >
+          <Icon name="arrowleft" size={30} color="#1A1D21" onPress={() => navigation.goBack()} />
+            <HStack space={3} >
+          <TouchableOpacity onPress={handleDelete} >
+            <Icon name="delete" size={28} color="#1A1D21" />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={submitContentHandle} >
+            <Icon name="checkcircleo" size={28} color="#1A1D21" />
+          </TouchableOpacity>
+            </HStack>
+
+        </HStack>
+        <View py={3}>
+        <Input
+              value={title}
+              onChangeText={setTitle}
+              p={0}
+              placeholder="Your Note Title "
+              borderRadius={0}
+              fontSize={30}
+              variant="unstyled"
+              fontFamily="mono"
+              fontWeight="700"
+              color="#1A1D21" />
+          <HStack h="12" w="full"  justifyContent="space-between" space={4} alignItems="center" >
+              
+                <Select 
+                selectedValue={category} 
+                borderWidth={0} 
+                dropdownIcon={
+                  <Icon2 name="circle" size={7} color="#1A1D21" />
+                }
+              
+                p="0" 
+                borderColor="white" w="20" fontSize={14} fontWeight="500" color="#717676" onValueChange={(itemValue) => {
+                  if (itemValue === "Add Category") {
+                    setModalVisible(true);
+                  }
+                  else {
+                    setCategory(itemValue)
+                  }
+                }} style={
+                  {
+                    borderWidth: 0,
+                    borderColor: "transparent",
+                  }
+                }  >
+                  {categories && categories.length && categories?.map((item, index) => (
+                    <Select.Item label={item?.category} fontSize={14} fontWeight="500" color="#717676"
+                      key={index}
+                      value={item?.category} />
+                  ))}
+                  <Select.Item   label="Add Category" fontSize={14} fontWeight="500" color="#717676" value="Add Category" >
+                <Icon name="pluscircle" size={30} color="#1A1D21" />
+                  </Select.Item>
+                </Select>
+              <Text  fontSize={14} fontFamily="mono" fontWeight="500" flex={1}  color="#717676" >
+                   {date}
+            </Text>
+            </HStack>
+        
+        </View>
+
+
+        <View style={styles.richTextContainer} >
+          <ScrollView>
+
+            <RichEditor
+              ref={richText}
+              onChange={richTextHandle}
+              placeholder="Write your cool content here :)"
+              androidHardwareAccelerationDisabled={true}
+              style={styles.richTextEditorStyle}
+              initialHeight={400}
+              editorStyle={{
+                backgroundColor: "#1A1D21",
+                color: "#fff",
+                padding: 20,
+                fontSize: 16,
+                lineHeight: 24,
+              }}
+              onHeightChange={(height) => {
+                scrollToInput(ReactNative.findNodeHandle(richText.current))
+
+              }}
+
+            />
+          </ScrollView>
           <RichToolbar
             editor={richText}
             selectedIconTint="#873c1e"
-            iconTint="#312921"
+            iconTint="#fff"
             actions={[
-
               actions.setBold,
               actions.setItalic,
               actions.insertBulletsList,
               actions.insertOrderedList,
-              actions.insertLink,
               actions.setStrikethrough,
               actions.setUnderline,
-              actions.checkboxList
+              actions.checkboxList,
             ]}
+
+
             style={styles.richTextToolbarStyle}
+
+
           />
         </View>
         {showDescError && (
@@ -81,14 +236,37 @@ export default function AddNote() {
             Your content shouldn't be empty 🤔
           </Text>
         )}
-
-        <TouchableOpacity
-          style={styles.saveButtonStyle}
-          onPress={submitContentHandle}
-        >
-          <Text style={styles.textButtonStyle}>Save</Text>
-        </TouchableOpacity>
       </View>
+      <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} initialFocusRef={initialRef} finalFocusRef={finalRef}>
+        <Modal.Content>
+          <Modal.CloseButton />
+          <Modal.Header>
+            Add Category </Modal.Header>
+          <Modal.Body>
+            <FormControl>
+              <FormControl.Label>Category Name</FormControl.Label>
+              <Input ref={initialRef} value={newCategory} onChangeText={setNewCategory} />
+            </FormControl>
+
+          </Modal.Body>
+          <Modal.Footer>
+            <Button.Group space={2}>
+              <Button variant="ghost" colorScheme="blueGray" onPress={() => {
+                setModalVisible(false);
+              }}>
+                Cancel
+              </Button>
+              <Button onPress={() => {
+                setModalVisible(false);
+                addCategory(newCategory);
+                setCategory(newCategory)
+              }}>
+                Add
+              </Button>
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -112,7 +290,6 @@ const styles = StyleSheet.create({
   htmlBoxStyle: {
     height: 200,
     width: 330,
-    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 20,
     marginBottom: 10
@@ -126,27 +303,18 @@ const styles = StyleSheet.create({
   },
 
   richTextEditorStyle: {
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-    borderWidth: 1,
-    borderColor: "#ccaf9b",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
-    fontSize: 20
+    backgroundColor: "#1A1D21",
+    borderColor: "#c6c3b3",
+    borderRadius: 10,
+    marginVertical: 10,
   },
 
+
   richTextToolbarStyle: {
-    backgroundColor: "#c6c3b3",
+    backgroundColor: "#1A1D21",
     borderColor: "#c6c3b3",
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderWidth: 1
+    borderRadius: 10,
+    marginBottom: 20,
   },
 
   errorTextStyle: {
@@ -154,29 +322,4 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
 
-  saveButtonStyle: {
-    backgroundColor: "#c6c3b3",
-    borderWidth: 1,
-    borderColor: "#c6c3b3",
-    borderRadius: 10,
-    padding: 10,
-    width: "25%",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
-    fontSize: 20
-  },
-
-  textButtonStyle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#312921"
-  }
 });

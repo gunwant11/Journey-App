@@ -15,7 +15,7 @@ const ConfirmationEmail = () => {
     {setLoading(true)
       try{
         const user  = await Auth.confirmSignUp(confirmationEmail, code)
-          .then(data => {console.log(data)
+          .then(data => {
             setLoading(false)})
           .catch(err => console.log(err));
 
@@ -31,7 +31,7 @@ const ConfirmationEmail = () => {
     setLoading(true)
     try{
       const user  = await Auth.resendSignUp(confirmationEmail)
-        .then(data => {console.log(data)
+        .then(data => {
           setLoading(false)})
         .catch(err => console.log(err));
     }

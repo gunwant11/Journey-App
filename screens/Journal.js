@@ -1,97 +1,115 @@
-import React from 'react'
+import React, { useReducer } from 'react'
 import { Box, Center, HStack, Heading, ScrollView, Text, VStack, View } from 'native-base';
 import useAppContext from '../store/userContext';
 import { useEffect } from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, TouchableOpacity } from 'react-native';
 import NoteCard from '../components/NoteCard';
+import userReducer from '../store/userReducer';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import Tabs from '../components/Tabs';
 
 export const Journal = () => {
 
-  const { getJourney, getJourneyLoadingState } = useAppContext();
+  const { getJourney, journeys , deleteJourney, getJourneyByCategory  } = useAppContext();
 
-  const [journeys, setJourneys] = React.useState([
-    {
-      id: 1,
-      title: 'My first journey',
-      description: 'This is my first journey',
-    },
-    {
-      id: 2,
-      title: 'My second journey',
-      description: 'This is my second journey',
-    },
-    {
-      id: 3,
-      title: 'My third journey',
-      description: 'This is my third journey',
-    },
-    {
-      id: 4,
-      title: 'My fourth journey',
-      description: 'This is my fourth journey',
-    },
-  ])
-  // journeys reducer
+  
+  const router = useRoute()
+  const navigation = useNavigation();
+  const category  = router?.params?.category
+  const [currentCategory, setCurrentCategory] = React.useState(category || 'all')
 
   useEffect(() => {
+    setCurrentCategory(category)
+    if(category){
+      getJourneyByCategory(category)
+    }else{
     getJourney()
-  }, [])
+    }
+
+  }, [router])
 
   useEffect(() => {
-    console.log(getJourneyLoadingState)
-  }, [getJourneyLoadingState])
+
+    console.log("journeys", journeys, journeys?.length )
+   
+  }, [journeys])
 
   return (
     <SafeAreaView>
       <View pt={10} h='full' width='100%' >
         <Box px={5} w="full"  >
+
           <Icon name="arrowleft" size={30} color="#1A1D21" />
           <Text fontSize={30} fontFamily="mono" fontWeight="700" color="#1A1D21" >
-            personal notes
+            {currentCategory || 'all'} journeys
           </Text>
+          {/* button to delete */}
+          {/* <Icon name="delete" size={30} color="#1A1D21" onPress={()=> deleteJourney("d06c18ab-4bf5-46e9-a603-ee30fe2326a5", "1664548912797") } /> */}
+          {/* button to get all notes */}
+          {/* <Icon name="search1" size={30} color="#1A1D21" onPress={()=> getJourney() } /> */}
         </Box>
+        <Box px={5} w="full" >
+          <ScrollView   >
+            <Tabs setCurrentCategory={setCurrentCategory}  />
+            </ScrollView>
+            </Box>
         <Box  >
-          <ScrollView  >
-            <VStack space={2} px={2} pt="5" w="full" alignItems="center">
+          <ScrollView   >
+            <VStack space={2} px={2} pt="5" w="full" pb={200} >
               <HStack space={2} mx="1" >
                 <VStack space={2} w="1/2" >
-                  <VStack justifyContent="space-between" p="3" px='5'  bg="#d7dede" height="48" rounded="2xl" shadow={3} opacity='0.8'  >
+                {journeys?.slice(0, 2).map((journey, index) => (
+                  <TouchableOpacity key={index} 
+                  onPress={()=> navigation.navigate('AddNote',{
+                    selectedJourney: journey,
+                  } ) }
+                  >
+                    
+                  <VStack key={index} justifyContent="space-between" p="3" px='5'  bg="#d7dede" height="48" rounded="2xl" shadow={3} opacity='0.8'  >
                     <Text color="black" fontSize="lg" fontWeight={900}  >
-                      your free thoughts
+                    {journey?.title}
                     </Text>
                     <Text color="#717676"  >
-                      Ice cream lemon drops cake muffin sweet roll muffin .
+                    {journey?.description}
                     </Text>
                   </VStack>
-                  <VStack justifyContent="space-between" p="3" px='5' bg="#d7dede" rounded="2xl" height="48" shadow={3} opacity='0.8'  >
-                    <Text color="black" fontSize="lg" fontWeight={900}  >
-                      your free thoughts
-                    </Text>
-                    <Text color="#717676"  >
-                      Ice cream lemon drops cake muffin sweet roll muffin .
-                    </Text>
-                  </VStack>
-                 
+                    </TouchableOpacity>
+                ))}
+
                 </VStack>
                 {/* <NoteCard accentCard={true}/> */}
-                <VStack justifyContent="space-between" p="3" px='5' w="1/2" bg="#1A1D21" rounded="2xl" shadow={3} opacity='0.8'  >
+                
+                {journeys?.slice(2, 3).map((journey, index) => (
+      
+                <Box
+                  onPress={()=> navigation.navigate('AddNote',{
+                  selectedJourney: journey,
+                })}
+                key={index} justifyContent="space-between" p="3" w="1/2" px='5' bg="#1A1D21" rounded="2xl" shadow={3} opacity='0.8'  >
                   <Text color="white" fontSize="lg" fontWeight={900}  >
-                    your free thoughts
+                    {journey?.title}
                   </Text>
                   <Text color="#717676"  >
-                    Ice cream lemon drops cake muffin sweet roll muffin .
-                    Ice cream lemon drops cake muffin sweet roll muffin .
-                    Ice cream lemon drops cake muffin sweet roll muffin .
-                    Ice cream lemon drops cake muffin sweet roll muffin . . . . .
+                    {journey?.description}
                   </Text>
-                </VStack>
+                </Box>
+         
+         ) )}
               </HStack>
-              
-              <NoteCard/>
-              <NoteCard/>
-              <NoteCard/>
-
+              {/* rest of journies */}
+              {journeys?.slice(3, journeys?.length).map((journey, index) => (
+                <NoteCard
+                  journey={journey}
+                  accentCard={false}
+                  title={journey?.title}
+                  description={journey?.description}
+                  key={index}
+                  journeyId={journey?.journeyId}
+                />
+              ))
+              }
+            
             </VStack>
           </ScrollView>
         </Box>

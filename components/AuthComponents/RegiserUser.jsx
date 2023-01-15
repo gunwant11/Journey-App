@@ -38,7 +38,7 @@ const RegiserUser = ({ setNewUser }) => {
           validationData: [],  //optional
         })
           .then(data => {
-            console.log(data)
+        
             setConfirmationEmail(email)
             setUser(data?.user)
             setLoading(false)
@@ -47,7 +47,7 @@ const RegiserUser = ({ setNewUser }) => {
           .catch(err => console.log(err));
       }
       catch(error) {
-        console.log('error signing in', error)
+        
         alert(error.message)
         setLoading(false)
       }

@@ -1,53 +1,52 @@
 import { API } from 'aws-amplify'
-import { Avatar, Box, Button, Center, HStack, ScrollView, Text, VStack, View } from 'native-base'
+import { Avatar, Box, Button, Center, HStack, ScrollView, Text, VStack, View, useToast } from 'native-base'
 import React, { Fragment, useEffect } from 'react'
 import useAppContext from '../store/userContext';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import FolderCard from '../components/FolderCard';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 export const Home = () => {
 
-  const { createJourney, getJourney,getJourneyById , getCategories  } = useAppContext();
-  const createJourneyHandler = async () => {
-    await createJourney('title111', 'description111', 'content1')
-  }
-
-  const getJourneyHandler = async () => {
-    await getJourney()
-  }
-
-   const getJourneyByIdHandler = async () => {
-    await getJourneyById("7bb9876e-84bd-4bbb-97f7-c667e5463212")
-  }
+  const {  getCategories,categories , user } = useAppContext();
 
 
-
+  const route = useRoute();
 
   useEffect(() => {
-    getJourneyById("7bb9876e-84bd-4bbb-97f7-c667e5463212")
-  }, [])
 
+    if (user) {
+      getCategories()
+    }
+
+  }, [user,route])
+
+  // useToasts globally available
 
 
   return (
-    <Box w="100%" h="full" px={2} pt={5} background="#1A1D21">
+    <Box w="100%" h="full" px={2} pt={5} background="#fff">
       <Box paddingX={4} >
         <HStack justifyContent="space-between" paddingY={5} alignItems="center">
-          <Text fontSize={34} fontFamily="mono" fontWeight="700" color="white">
+          <Text fontSize={34} fontFamily="mono" fontWeight="700" color="#1A1D21">
             folders
           </Text>
-          <Icon name="calendar-month" size={30} color="#fff" />
+          <Icon name="calendar-month" size={30} color="#1A1D21" />
         </HStack>
       </Box>
       <ScrollView  >
         <VStack space={2} paddingBottom="16" >
-          <FolderCard></FolderCard>
-          <FolderCard></FolderCard>
-          <FolderCard></FolderCard>
-          <FolderCard></FolderCard>
-          <FolderCard></FolderCard>
-          <FolderCard></FolderCard>
-          <FolderCard></FolderCard>
+      
+          {
+            categories?.map((item, index) => {
+              return (
+                <Fragment key={index}>
+                  <FolderCard category={item.category} lenght={item.count}  ></FolderCard>
+                </Fragment>
+              )
+            })
+          }
+      
         </VStack>
       </ScrollView>
       {/* <Box>

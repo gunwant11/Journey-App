@@ -20,7 +20,7 @@ const SignIn = ({setNewUser}) => {
       try{
         const user = await Auth.signIn(email, password)
           .then(data => {
-            console.log(data)
+
             setUser(data)
             setLoading(false)
             navigation.navigate('Home')

@@ -12,11 +12,10 @@ const ResetPassword = () => {
   const navigator = useNavigation()
   const route = useRoute()
   const { email } = route.params
-  console.log(email)
+
 
   const handleSubmit = () => {
     setFormSubmitted(true);
-    console.log(loading)
     if (code && email && newPassword) {
       setLoading(true);
       Auth.forgotPasswordSubmit(email, code, newPassword)

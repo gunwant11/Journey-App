@@ -26,6 +26,19 @@
           "delete"
         ]
       }
+    },
+    "/categories": {
+      "name": "/categories",
+      "lambdaFunction": "journeyjs",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ]
+      }
     }
   }
 }

@@ -26,7 +26,7 @@
         },
         "journeyjs": {
           "deploymentBucketName": "amplify-newjourneyapp-dev-231323-deployment",
-          "s3Key": "amplify-builds/journeyjs-70376f63425779306141-build.zip"
+          "s3Key": "amplify-builds/journeyjs-4f6c6f614d4262466a71-build.zip"
         }
       },
       "api": {
