@@ -33,8 +33,8 @@ const ForgotPassword = () => {
 
 
 
-  return <Center w="100%" backgroundColor='info.600'>
-    <Box  p="2" py="8" w="90%" minH="full" maxW="400">
+  return <Center justifyContent="flex-start"  w="100%" h="full" backgroundColor='#1A1D21'>
+  <Box safeArea p="2" w="90%" py="8">
       <Heading size="lg" fontWeight="600" color="white" >
        Reset Password
       </Heading>

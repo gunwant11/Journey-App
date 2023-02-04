@@ -1,5 +1,5 @@
 import { API } from 'aws-amplify'
-import { Avatar, Box, Button, Center, HStack, ScrollView, Text, VStack, View, useToast } from 'native-base'
+import { Avatar, Box, Button, Center, HStack, ScrollView, Skeleton, Text, VStack, View, useToast } from 'native-base'
 import React, { Fragment, useEffect } from 'react'
 import useAppContext from '../store/userContext';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
@@ -8,7 +8,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 
 export const Home = () => {
 
-  const {  getCategories,categories , user } = useAppContext();
+  const {  getCategories,categories , user,getCategoriesLoading } = useAppContext();
 
 
   const route = useRoute();
@@ -36,7 +36,9 @@ export const Home = () => {
       </Box>
       <ScrollView  >
         <VStack space={2} paddingBottom="16" >
-      
+        <Text>
+          {JSON.stringify(getCategoriesLoading)}
+        </Text>
           {
             categories?.map((item, index) => {
               return (
@@ -49,11 +51,7 @@ export const Home = () => {
       
         </VStack>
       </ScrollView>
-      {/* <Box>
-        <Button onPress={() => createJourneyHandler()} >Create Journey</Button>
-        <Button onPress={() => getJourneyHandler()} >Get Journey</Button>
-      </Box> */}
-
+      
     </Box>
   )
 }

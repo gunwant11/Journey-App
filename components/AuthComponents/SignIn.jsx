@@ -36,24 +36,27 @@ const SignIn = ({setNewUser}) => {
   }
 
 
-  return <Center w="100%" backgroundColor='primary.500'>
-    <Box  p="2" py="8" w="90%" minH="full" maxW="400">
-      <Heading size="lg" fontWeight="600" color="white" >
-            Welcome
+  return <Center   w="100%" h="full" backgroundColor='#1A1D21'>
+    <Box safeArea p="2" w="90%" maxW="400" py="8">
+      <Heading size="2xl" color="white" _dark={{
+        color: "warmGray.50"
+      }} fontWeight="semibold">
+        Welcome
       </Heading>
-      <Heading mt="1"  color="white" fontWeight="medium" size="xs">
-            Sign in to continue!
+      <Heading mt="1" color="white" _dark={{
+        color: "white"
+      }} fontWeight="medium" size="xs">
+        Sign up to continue!
       </Heading>
-  
       <VStack space={3} mt="5">
         <FormControl isRequired  isInvalid={fromSubmitted && !email} color="white">
           <FormControl.Label color="amber.400">Email ID</FormControl.Label>
-          <Input onChangeText={setEmail} value={email} />
+          <Input borderWidth={0} backgroundColor="gray.700"   onChangeText={setEmail} value={email} />
           <FormControl.ErrorMessage  color="red.500">Email is required</FormControl.ErrorMessage>
         </FormControl>
         <FormControl isRequired isInvalid={fromSubmitted && !password }>
           <FormControl.Label color="white" >Password</FormControl.Label>
-          <Input type="password" onChangeText={setPassword} value={password} />
+          <Input borderWidth={0} backgroundColor="gray.700"   type="password" onChangeText={setPassword} value={password} />
           <FormControl.ErrorMessage  color="red.500">Password is required</FormControl.ErrorMessage>
           <Link _text={{
             fontSize: "xs",

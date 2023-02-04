@@ -135,6 +135,7 @@ export const UserProvider = ({children})=>{
 
   const getCategories = async () =>{
     try{
+      getCategoriesLoading(true)
       if(state.user === null || state.user.username === null ) return
       const categories = await API.get('journeyapp', `/categories`)
 
@@ -154,8 +155,10 @@ export const UserProvider = ({children})=>{
         type: userActionTypes.GET_CATEGORIES,
         categories: unique
       })
+      getCategoriesLoading(false)
     }catch(err){
       console.log(err)
+      getCategoriesLoading(false)
     }
   }
 
@@ -305,7 +308,8 @@ export const UserProvider = ({children})=>{
     getCategoriesLoading,
     getJourneyById,
     getJourneyByIdLoading,
-    addCategory
+    addCategory,
+    getCategoriesLoading
   };
 
 

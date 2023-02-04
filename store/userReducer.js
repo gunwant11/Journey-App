@@ -11,7 +11,6 @@ export const initialState = {
   getJourneyByIdLoading: false,
   getJourneyByCategoryLoadingState: false,
   getJourneyByCategory: null,
-  getCategoriesLoadingState: false,
   getCategories: null,
   deleteJourneyLoadingState: false,
   deleteJourney: null,

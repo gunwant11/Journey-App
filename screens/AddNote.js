@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
 
   richTextContainer: {
     display: "flex",
-    flexDirection: "column-reverse",
+    flexDirection: "column",
     width: "100%",
     marginBottom: 10
   },

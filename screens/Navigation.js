@@ -5,7 +5,6 @@ import { ActivityIndicator } from 'react-native-web';
 import { View } from 'native-base';
 import {  Auth } from 'aws-amplify';
 import {Journal} from "./Journal";
-
 import ConfirmationEmail from "../components/AuthComponents/ConfirmationEmail";
 import Login from './Login';
 import ForgotPassword from "../components/AuthComponents/ForgotPassword";
@@ -91,6 +90,7 @@ const Navigation = () => {
             options={{
               headerShown: false,
               tabBarVisible: false,
+              tabBarStyle: { display: "none" },
               tabBarIcon: ({focused})=>(
                 <View 
                 style={{

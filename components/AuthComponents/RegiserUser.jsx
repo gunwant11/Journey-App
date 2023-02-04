@@ -56,9 +56,9 @@ const RegiserUser = ({ setNewUser }) => {
   }
 
 
-  return <Center w="100%" backgroundColor='indigo.500'>
+  return <Center w="100%" h="full" backgroundColor='#1A1D21'>
     <Box safeArea p="2" w="90%" maxW="400" py="8">
-      <Heading size="lg" color="white" _dark={{
+      <Heading size="2xl" color="white" _dark={{
         color: "warmGray.50"
       }} fontWeight="semibold">
         Welcome
@@ -71,22 +71,22 @@ const RegiserUser = ({ setNewUser }) => {
       <VStack space={3} mt="5">
         <FormControl isRequired isInvalid={fromSubmitted && !username}>
           <FormControl.Label color="white" >UserName</FormControl.Label>
-          <Input onChangeText={setUsername} value={username} />
+          <Input borderWidth={0} backgroundColor="gray.700"  onChangeText={setUsername} value={username} />
           <FormControl.ErrorMessage   p='0' m='0' color='red' fontSize='xs' > Please enter a username </FormControl.ErrorMessage>
         </FormControl>
         <FormControl isRequired isInvalid={fromSubmitted && !email}>
           <FormControl.Label color="white" >Email</FormControl.Label>
-          <Input type='email' onChangeText={setEmail} value={email} />
+          <Input borderWidth={0} backgroundColor="gray.700"  type='email' onChangeText={setEmail} value={email} />
           <FormControl.ErrorMessage p='0' m='0' color='red' fontSize='xs'> Please enter a email adderss </FormControl.ErrorMessage>
         </FormControl>
         <FormControl isRequired isInvalid={fromSubmitted && !password && password.length > 8 }>
           <FormControl.Label color="white" >Password</FormControl.Label>
-          <Input type="password" onChangeText={setPassword} value={password} />
+          <Input borderWidth={0} backgroundColor="gray.700"  type="password" onChangeText={setPassword} value={password} />
           <FormControl.ErrorMessage  p='0' m='0' color='red' fontSize='xs'> Please enter a valid password </FormControl.ErrorMessage>
         </FormControl>
         <FormControl isRequired isInvalid={fromSubmitted && (!confirmPassword || confirmPassword !== password)}>
           <FormControl.Label color="white" >Confirm Password</FormControl.Label>
-          <Input type="password" onChangeText={setConfirmPassword} value={confirmPassword} />
+          <Input borderWidth={0} backgroundColor="gray.700"  type="password" onChangeText={setConfirmPassword} value={confirmPassword} />
           <FormControl.ErrorMessage  p='0' m='0' color='red' fontSize='xs'> Please enter a valid password </FormControl.ErrorMessage>
         </FormControl>
         <Button mt="2" colorScheme="indigo" onPress={()=>handleSignIn()} >
