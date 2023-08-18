@@ -12,18 +12,12 @@ Amplify.configure({  ...awsconfig,  Analytics: {disabled: true,}, API: { endpoin
   region: "ap-south-1",
   path: '/user/{userId}',
 } ] } })
-
 API.configure(awsconfig);
 
 // 291440
 function App() {
 
   const [loaded] = useFonts({
-  //   'CormorantGaramond-Bold': require('./assets/fonts/CormorantGaramond-Bold.ttf'),
-  //   'CormorantGaramond-Medium': require('./assets/fonts/CormorantGaramond-Medium.ttf'),
-  //   'CormorantGaramond-Regular': require('./assets/fonts/CormorantGaramond-Regular.ttf'),
-  //   'CormorantGaramond-SemiBold': require('./assets/fonts/CormorantGaramond-SemiBold.ttf'),
-  //
     'Euclid-Circular-B-Regular': require('./assets/fonts/Euclid-Circular-B-Regular.ttf'),
     'Euclid-Circular-B-Medium': require('./assets/fonts/Euclid-Circular-B-Medium.ttf'),
     'Euclid-Circular-B-SemiBold': require('./assets/fonts/Euclid-Circular-B-SemiBold.ttf'),
@@ -69,5 +63,6 @@ function App() {
     </NativeBaseProvider>
   );
 }
+
 
 export default (App)

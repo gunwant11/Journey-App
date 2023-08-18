@@ -138,8 +138,6 @@ app.get(path + '/*', function(req, res) {
 });
 
 
-
-
 // categories?category=${category}
 
 // app.get(path + '/categories', function(req, res) {

@@ -25,6 +25,7 @@ export const Home = () => {
 
 
   return (
+    
     <Box w="100%" h="full" px={2} pt={5} background="#fff">
       <Box paddingX={4} >
         <HStack justifyContent="space-between" paddingY={5} alignItems="center">

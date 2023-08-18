@@ -21,8 +21,6 @@ export const initialState = {
   journeyById: null,
 
 
-
-
 };
 
 const userReducer = (state =initialState , action) => {

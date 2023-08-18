@@ -1,176 +1,216 @@
-import { NavigationContainer } from '@react-navigation/native'
-import React from 'react'
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ActivityIndicator } from 'react-native-web';
-import { View } from 'native-base';
-import {  Auth } from 'aws-amplify';
-import {Journal} from "./Journal";
+import { NavigationContainer } from "@react-navigation/native";
+import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { ActivityIndicator } from "react-native-web";
+import { View } from "native-base";
+import { Auth } from "aws-amplify";
+import { Journal } from "./Journal";
 import ConfirmationEmail from "../components/AuthComponents/ConfirmationEmail";
-import Login from './Login';
+import Login from "./Login";
 import ForgotPassword from "../components/AuthComponents/ForgotPassword";
 import ResetPassword from "../components/AuthComponents/ResetPassword";
-import useAppContext from '../store/userContext';
-import { Home } from './Home';
-import { Profile } from './Profile';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/Octicons'
-import AddNote from './AddNote';
+import useAppContext from "../store/userContext";
+import { Home } from "./Home";
+import { Profile } from "./Profile";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Icon from "react-native-vector-icons/Octicons";
+import Icon2 from "react-native-vector-icons/FontAwesome5";
+import Icon3 from "react-native-vector-icons/FontAwesome";
+import AddNote from "./AddNote";
+import Calander from "./Calander";
+
 
 const Navigation = () => {
-
   const [currentuser, setCurrentuser] = React.useState(true);
-  const { setUser  } = useAppContext();
+  const { setUser } = useAppContext();
   const checkuser = async () => {
-    try{
+    try {
       const user = await Auth.currentAuthenticatedUser({ bypassCache: true });
       setCurrentuser(user);
       setUser(user);
-    } catch(err) {
-      console.log(err)
+    } catch (err) {
+      console.log(err);
       setCurrentuser(null);
       setUser(null);
     }
-  }
+  };
 
   React.useEffect(() => {
     checkuser();
-  }, [])
+  }, []);
 
+  const viewStyle = (focused) => {
+    return {
+      backgroundColor: focused ? "#edb0b9" : "#b2aed1b2",
+      borderRadius: 100,
+      padding: 12,  
+
+    };
+  };
 
 
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
   return (
     <NavigationContainer>
-
-      {currentuser ?  (
+      {currentuser ? (
+ 
         <Tab.Navigator
           screenOptions={{
             headerShown: false,
             tabBarShowLabel: false,
-      
-            tabBarStyle:{
-              position: 'absolute',
+
+            tabBarStyle: {
+              position: "absolute",
               borderTopWidth: 0,
               bottom: 25,
               left: 20,
-              right:20,
-              elevation: 0,
-              backgroundColor: "#1a1d21",
-              borderRadius: 20,
+              right: 20,
+              elevation: 0,   alignItems: 'center',
+              flex: 1,
+              backgroundColor: "transparent",
               height: 60,
               // ...styles.shadow
-            }
-          }}
-          
-        >
-          <Tab.Screen
-            options={{
-              tabBarIcon: ({focused})=>(
-                <View
-                style={{
-                  backgroundColor: focused ? "#cc4f4f" : "#1a1d21",
-                  borderRadius: 55,
-                  padding: 10,
-                }}
-                >
-                  <Icon name='home' size={25}  color={focused ? "#fff" : "#c2c2c2" }/>
-                </View>
-              )
-            }}
-            name="Home" component={Home} />
-          <Tab.Screen name="AddNote" 
-          navigationOptions={{
-            headerVisible: false,
-            bottomNavigationOptions: {
-              visible: false,
             },
           }}
+        >
+           <Tab.Screen
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <View
+                  style={{
+                    ...viewStyle(focused),
+                  }}
+                >
+                  <Icon
+                    name="book"
+                    size={20}
+                    color={"#fff" }
+                  />
+                </View>
+              ),
+            }}
+            name="Journal"
+            component={Journal}
+          />
 
+          <Tab.Screen
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <View
+                  style={{
+                    ...viewStyle(focused),
+                  }}
+                >
+                  <Icon2
+                    name="calendar-alt"
+                    size={20}
+                    color={"#fff" }
+                  />
+                </View>
+              ),
+            }}
+            name="Calander"
+            component={Calander}
+          />
+          <Tab.Screen
+            name="AddNote"
+            navigationOptions={{
+              headerVisible: false,
+              bottomNavigationOptions: {
+                visible: false,
+              },
+            }}
             options={{
               headerShown: false,
               tabBarVisible: false,
               tabBarStyle: { display: "none" },
-              tabBarIcon: ({focused})=>(
-                <View 
-                style={{
-                  backgroundColor: focused ? "#cc4f4f" : "#1a1d21",
-                  borderRadius: 55,
-                  padding: 10,
-                }}
-                >
-                  <Icon name='plus-circle' size={25}  color={focused ? "#fff" : "#c2c2c2" }/>
-                </View>
-              )
-            }}
-            component={AddNote} />
-          <Tab.Screen
-          
-            options={{
-              tabBarIcon: ({focused})=>(
-                <View
-                style={{
-                  backgroundColor: focused ? "#cc4f4f" : "#1a1d21",
-                  borderRadius: 55,
-                  padding: 10,
-
-                }}
-                >
-                  <Icon name='book' size={25}  color={focused ? "#fff" : "#c2c2c2" }/>
-                </View>
-              )
-            }}
-            name="Journal" component={Journal} />
-          <Tab.Screen
-            options={{
-              tabBarIcon: ({focused})=>(
+              tabBarIcon: ({ focused }) => (
                 <View
                   style={{
-                    backgroundColor: focused ? "#cc4f4f" : "#1a1d21",
+                    backgroundColor: focused ? "#cc4f4f" : "#5a5190",
                     borderRadius: 55,
                     padding: 10,
-
+                    borderWidth: 7,
+                    borderColor: "#b2aed1b2",
+                    
                   }}
                 >
-
-                  <Icon name='gear' size={25} color={focused ? "#fff" : "#c2c2c2" }/>
+                  <Icon
+                    name="plus"
+                    size={22}
+                      paddingRight={3}
+                      paddingLeft={3}
+                    color={"#fff" }
+                    
+                    
+                  />
                 </View>
-              )
+              ),
             }}
-            name="Profile" component={Profile} />
+            component={AddNote}
+          />
+          <Tab.Screen
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <View
+                  style={{
+                   ...viewStyle(focused),
+                  }}
+                >
+                  <Icon
+                    name="home"
+                    size={20}
+                    color={"#fff" }
+                  />
+                </View>
+              ),
+            }}
+            name="Home"
+            component={Home}
+          />
           
-        </Tab.Navigator>
-      )
-        : (
-          <Stack.Navigator
-            screenOptions={{
-              headerShown: false
+         
+          <Tab.Screen
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <View
+                  style={{
+                    ...viewStyle(focused),
+                  }}
+                >
+                  <Icon3
+                    name="user-o"
+                    size={20}
+                    color={"#fff" }
+                  />
+                </View>
+              ),
             }}
-          >
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="ConfirmationEmail" component={ConfirmationEmail} />
-            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-            <Stack.Screen name="ResetPassword" component={ResetPassword} />
-            <Stack.Screen name='Home' component={Home} />
-          </Stack.Navigator>
-        )}
-    
-      
+            name="Profile"
+            component={Profile}
+          />
+        </Tab.Navigator>
+      ) : (
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen
+            name="ConfirmationEmail"
+            component={ConfirmationEmail}
+          />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          <Stack.Screen name="ResetPassword" component={ResetPassword} />
+          <Stack.Screen name="Home" component={Home} />
+        </Stack.Navigator>
+      )}
     </NavigationContainer>
-  )
-}
+  );
+};
 
-const styles = {
-  shadow: {
-    shadowColor: "#a5a5a5",
-    shadowOffset: {
-      width: 0,
-      height: 5,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 3,
-  }
-}
 
-export default Navigation
+export default Navigation;
+
