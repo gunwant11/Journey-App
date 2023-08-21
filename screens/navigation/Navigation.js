@@ -4,20 +4,19 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ActivityIndicator } from "react-native-web";
 import { View } from "native-base";
 import { Auth } from "aws-amplify";
-import { Journal } from "./Journal";
-import ConfirmationEmail from "../components/AuthComponents/ConfirmationEmail";
-import Login from "./Login";
-import ForgotPassword from "../components/AuthComponents/ForgotPassword";
-import ResetPassword from "../components/AuthComponents/ResetPassword";
-import useAppContext from "../store/userContext";
-import { Home } from "./Home";
-import { Profile } from "./Profile";
+import { Journal } from "../Journal";
+import ConfirmationEmail from "../../components/AuthComponents/ConfirmationEmail";
+import Login from "../Login";
+import ForgotPassword from "../../components/AuthComponents/ForgotPassword";
+import ResetPassword from "../../components/AuthComponents/ResetPassword";
+import useAppContext from "../../store/userContext";
+import { Profile } from "../Profile";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Octicons";
 import Icon2 from "react-native-vector-icons/FontAwesome5";
-import Icon3 from "react-native-vector-icons/FontAwesome";
-import AddNote from "./AddNote";
-import Calander from "./Calander";
+import AddNote from "../AddNote";
+import Calander from "../Calander";
+import Gallery from "../Gallery";
 
 
 const Navigation = () => {
@@ -43,8 +42,11 @@ const Navigation = () => {
     return {
       backgroundColor: focused ? "#edb0b9" : "#b2aed1b2",
       borderRadius: 100,
-      padding: 12,  
-
+      width: 45,
+      height: 45,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
     };
   };
 
@@ -70,7 +72,6 @@ const Navigation = () => {
               flex: 1,
               backgroundColor: "transparent",
               height: 60,
-              // ...styles.shadow
             },
           }}
         >
@@ -115,6 +116,7 @@ const Navigation = () => {
           />
           <Tab.Screen
             name="AddNote"
+            disabled= {true}
             navigationOptions={{
               headerVisible: false,
               bottomNavigationOptions: {
@@ -124,6 +126,7 @@ const Navigation = () => {
             options={{
               headerShown: false,
               tabBarVisible: false,
+              disabled: true,
               tabBarStyle: { display: "none" },
               tabBarIcon: ({ focused }) => (
                 <View
@@ -159,28 +162,26 @@ const Navigation = () => {
                   }}
                 >
                   <Icon
-                    name="home"
+                    name="image"
                     size={20}
                     color={"#fff" }
                   />
                 </View>
               ),
             }}
-            name="Home"
-            component={Home}
+            name="Gallery"
+            component={Gallery}
           />
-          
-         
-          <Tab.Screen
+           <Tab.Screen
             options={{
               tabBarIcon: ({ focused }) => (
                 <View
                   style={{
-                    ...viewStyle(focused),
+                   ...viewStyle(focused),
                   }}
                 >
-                  <Icon3
-                    name="user-o"
+                  <Icon
+                    name="person"
                     size={20}
                     color={"#fff" }
                   />
@@ -190,6 +191,8 @@ const Navigation = () => {
             name="Profile"
             component={Profile}
           />
+          
+
         </Tab.Navigator>
       ) : (
         <Stack.Navigator
@@ -204,7 +207,6 @@ const Navigation = () => {
           />
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           <Stack.Screen name="ResetPassword" component={ResetPassword} />
-          <Stack.Screen name="Home" component={Home} />
         </Stack.Navigator>
       )}
     </NavigationContainer>

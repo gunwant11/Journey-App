@@ -26,16 +26,13 @@ export type AmplifyDependentResourcesAttributes = {
       "LambdaExecutionRoleArn": "string",
       "Name": "string",
       "Region": "string"
-    },
-    "newtesting": {
-      "Arn": "string",
-      "LambdaExecutionRole": "string",
-      "LambdaExecutionRoleArn": "string",
-      "Name": "string",
-      "Region": "string"
     }
   },
   "storage": {
+    "journeyIMG": {
+      "BucketName": "string",
+      "Region": "string"
+    },
     "journeytable": {
       "Arn": "string",
       "Name": "string",

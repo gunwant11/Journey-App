@@ -3,28 +3,23 @@ import userReducer, { initialState } from "./userReducer";
 import React from "react";
 import 'react-native-get-random-values';
 import { useReducer } from "react";
-import { API } from 'aws-amplify';
+import { API, Storage } from 'aws-amplify';
 import { v4 as uuidv4 } from 'uuid';
 import { Toast } from 'native-base';
+import * as journeyService from '../services/journeyService'
 export const userActionTypes = {
   SET_CONFIRMATION_EMAIL: "SET_CONFIRMATION_EMAIL",
   SET_USER: "SET_USER",
   CREATE_JOURNEY: "CREATE_JOURNEY",
   CREATE_JOURNEY_LOADING: "CREATE_JOURNEY_LOADING",
-  GET_JOURNEY_BY_USER: "GET_JOURNEY_BY_USER",
-  GET_JOURNEY_BY_USER_LOADING: "GET_JOURNEY_BY_USER_LOADING",
+  GET_JOURNEYS: "GET_JOURNEYS",
+  GET_JOURNEYS_LOADING: "GET_JOURNEYS_LOADING",
   DELETE_JOURNEY: "DELETE_JOURNEY",
   DELETE_JOURNEY_LOADING: "DELETE_JOURNEY_LOADING",
   UPDATE_JOURNEY: "UPDATE_JOURNEY",
   UPDATE_JOURNEY_LOADING: "UPDATE_JOURNEY_LOADING",
-  GET_JOURNEY_BY_CATEGORY: "GET_JOURNEY_BY_CATEGORY",
-  GET_JOURNEY_BY_CATEGORY_LOADING: "GET_JOURNEY_BY_CATEGORY_LOADING",
-  GET_CATEGORIES: "GET_CATEGORIES",
-  GET_CATEGORIES_LOADING: "GET_CATEGORIES_LOADING",
-  GET_JOURNEY_BY_ID: "GET_JOURNEY_BY_ID",
-  GET_JOURNEY_BY_ID_LOADING: "GET_JOURNEY_BY_ID_LOADING",
-  ADD_CATEGORY: "ADD_CATEGORY",
-
+  GET_JOURNEYS_BY_DATE: "GET_JOURNEYS_BY_DATE",
+  GET_JOURNEYS_BY_DATE_LOADING: "GET_JOURNEYS_BY_DATE_LOADING",
 }
 
 const UserContext = createContext(initialState);
@@ -71,39 +66,20 @@ export const UserProvider = ({children})=>{
     });
   };
 
-  const createJourneyLoading = (createJourneyLoadingState) => {
-    dispatch({
-      type: userActionTypes.CREATE_JOURNEY_LOADING,
-      createJourneyLoadingState
-    })
 
-  }
-
-  const createJourney = async ( title, description, content, descHTML,category , callback) =>{
+  const createJourney = async (title, description, content, descHTML, mood, imageKey, date, callback) =>{
     const journeyId = uuidv4();
     try{
       createJourneyLoading(true)
-      const createdJourney  = await API.post('journeyapp', `/user/${state.user.username}`, {
-        body: {
-          journeyId ,
-          title,
-          createdAt: Date.now().toString(),
-          description,
-          descHTML,
-          category,
-          content,
-        }
-      })
+      const createdJourney = await journeyService.createJourney(state.user.username, title, description, content, descHTML, mood, imageKey);
+      console.log(createdJourney, 'created journey')
       dispatch({
         type: userActionTypes.CREATE_JOURNEY,
         createdJourney
       })
       createJourneyLoading(false)
       if(callback) callback()
-
        handleNotification("Journey created successfully", "success")
-
-
     } catch (err) {
       createJourneyLoading(false)
       console.log(err)
@@ -111,20 +87,23 @@ export const UserProvider = ({children})=>{
     }
   } 
 
-  const getJourneyLoading = (getJourneyLoadingState) =>{
+  const createJourneyLoading = (createJourneyLoadingState) => {
     dispatch({
-      type: userActionTypes.GET_JOURNEY_BY_USER_LOADING,
-      getJourneyLoadingState
+      type: userActionTypes.CREATE_JOURNEY_LOADING,
+      createJourneyLoadingState
     })
   }
 
-  const getJourney = async () =>{
+
+
+  const getJourney = async (createdAt, journeyId) =>{
     try{
       getJourneyLoading(true);
-      const journeys = await API.get('journeyapp', `/user/${state.user.username}`)
+      const journeys =  await journeyService.getJourneys(state.user.username, createdAt, journeyId) 
+      console.log('journalsWithImages' , journeys)
       dispatch({
-        type: userActionTypes.GET_JOURNEY_BY_USER,
-        journeys
+        type: userActionTypes.GET_JOURNEYS,
+        journeys 
       })
       getJourneyLoading(false);
     }catch(err){
@@ -133,119 +112,23 @@ export const UserProvider = ({children})=>{
     }
   }
 
-  const getCategories = async () =>{
-    try{
-      getCategoriesLoading(true)
-      if(state.user === null || state.user.username === null ) return
-      const categories = await API.get('journeyapp', `/categories`)
-
-         const unique = categories.categories.reduce((acc, journey) => {
-            if (!journey) return acc;
-           const category = journey;
-           const categoryObj = acc.find(obj => obj.category === category);
-           if (categoryObj) {
-             categoryObj.count++;
-           } else {
-             acc.push({category, count: 1});
-           }
-           
-           return acc;
-         }, []);
-      dispatch({
-        type: userActionTypes.GET_CATEGORIES,
-        categories: unique
-      })
-      getCategoriesLoading(false)
-    }catch(err){
-      console.log(err)
-      getCategoriesLoading(false)
-    }
-  }
-
-
-  const addCategory = (category) =>{
+  const getJourneyLoading = (getJourneyLoadingState) =>{
     dispatch({
-      type: userActionTypes.ADD_CATEGORY,
-      category
-    })
-  }
-
-  const getCategoriesLoading = (getCategoriesLoading) =>{
-    dispatch({
-      type: userActionTypes.GET_CATEGORIES_LOADING,
-      getCategoriesLoading
+      type: userActionTypes.GET_JOURNEYS_LOADING,
+      getJourneyLoadingState
     })
   }
 
 
-  const getJourneyByCategory = async (category) =>{
-    try{
-      const journeysByCategory = await API.get('journeyapp', `/categories?category=${category}`)
-      dispatch({
-        type: userActionTypes.GET_JOURNEY_BY_CATEGORY,
-        journeysByCategory
-      })
-    }catch(err){
-      console.log(err)
-    }
-  }
-
-  const getJourneyByCategoryLoading = (getJourneyByCategoryLoadingState) =>{
-    dispatch({
-      type: userActionTypes.GET_JOURNEY_BY_CATEGORY_LOADING,
-      getJourneyByCategoryLoadingState
-    })
-  }
-  // /user/{userId}/journey/{journeyId}
-  const getJourneyById = async (journeyId ) =>{
-    try{
-      const journeyById = await API.get('journeyapp', `/user/${state.user.username}/journey/${journeyId}`)
-      dispatch({
-        type: userActionTypes.GET_JOURNEY_BY_CATEGORY,
-        journeyById
-      })
-      console.log(journeyById)
-      return journeyById 
-    }catch(err){
-      console.log(err)
-    }
-  }
-
-  const getJourneyByIdLoading = (getJourneyByIdLoadingState) =>{
-    dispatch({
-      type: userActionTypes.GET_JOURNEY_BY_CATEGORY_LOADING,
-      getJourneyByIdLoadingState
-    })
-  }
-
-
-  const deleteJourneyLoading = (deleteJourneyLoading) =>{
-    dispatch({
-      type: userActionTypes.DELETE_JOURNEY_LOADING,
-      deleteJourneyLoading
-    })
-  }
-
-// /user/{userId}/{params}
-
-// partation key and sort key
   const deleteJourney = async (journeyId, createdAt, callback  ) =>{
-    const myInit = {
-      body: {
-        journeyId,
-        createdAt
-      }
-    }
-
     try{
       deleteJourneyLoading(true)
-      const deletedJourney = await API.del('journeyapp', `/user/${state.user.username}/${journeyId}`, myInit)
+      const deletedJourney = await journeyService.deleteJourney(state.user.username, journeyId, createdAt)
       dispatch({
         type: userActionTypes.DELETE_JOURNEY,
         deletedJourney
       })
       deleteJourneyLoading(false)
-      console.log('deleted Journey' +deletedJourney )
       handleNotification("Journey deleted successfully", "success")
       if(callback) callback()
     }catch(err){
@@ -255,23 +138,17 @@ export const UserProvider = ({children})=>{
     }
   }
 
-  const updateJourneyLoading = (updateJourneyLoading) =>{
+const deleteJourneyLoading = (deleteJourneyLoading) =>{
     dispatch({
-      type: userActionTypes.UPDATE_JOURNEY_LOADING,
-      updateJourneyLoading
+      type: userActionTypes.DELETE_JOURNEY_LOADING,
+      deleteJourneyLoading
     })
   }
 
   const updateJourney = async (journeyId, title, description, content) =>{
     try{
       updateJourneyLoading(true)
-      const updatedJourney = await API.put('journeyapp', `/user/${state.user.username}/${journeyId}`, {
-        body: {
-          title,
-          description,
-          content
-        }
-      })
+      const updatedJourney = await  journeyService.updateJourney(state.user.username, journeyId, title, description, content)
       dispatch({
         type: userActionTypes.UPDATE_JOURNEY,
         updatedJourney
@@ -285,13 +162,44 @@ export const UserProvider = ({children})=>{
     }
   }
 
+  const updateJourneyLoading = (updateJourneyLoading) =>{
+    dispatch({
+      type: userActionTypes.UPDATE_JOURNEY_LOADING,
+      updateJourneyLoading
+    })
+  }
+
+
+  const getJourneyByDate = async (date) =>{
+    try{
+      getJourneyByDateLoading(true)
+      const journeys = await journeyService.getJourneys(state.user.username, date) 
+      console.log('journalsWithImages' , journeys)
+      dispatch({
+        type: userActionTypes.GET_JOURNEYS_BY_DATE,
+        journeysByDate : journeys
+      })
+      getJourneyByDateLoading(false)
+    }catch(err){
+      getJourneyByDateLoading(false)
+      console.log(err)
+    }
+  }
+
+  const getJourneyByDateLoading = (getJourneyByDateLoadingState) =>{
+    dispatch({
+      type: userActionTypes.GET_JOURNEYS_BY_DATE_LOADING,
+      getJourneyByDateLoadingState
+    })
+  }
+
+
+
   const value = {
     user: state.user,
     confirmationEmail: state.confirmationEmail,
     journeys: state.journeys,
-    categories: state.categories,
-    journeysByCategory: state.journeysByCategory,
-    journeyById: state.journeyById,
+    journeysByDate : state.journeysByDate,
     setUser,
     setConfirmationEmail,
     createJourneyLoading,
@@ -302,14 +210,8 @@ export const UserProvider = ({children})=>{
     deleteJourneyLoading,
     updateJourney,
     updateJourneyLoading,
-    getJourneyByCategory,
-    getJourneyByCategoryLoading,
-    getCategories,
-    getCategoriesLoading,
-    getJourneyById,
-    getJourneyByIdLoading,
-    addCategory,
-    getCategoriesLoading
+    getJourneyByDate,
+    getJourneyByDateLoading
   };
 
 

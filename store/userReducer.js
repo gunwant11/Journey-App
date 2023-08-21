@@ -8,17 +8,11 @@ export const initialState = {
   getJourneyLoadingState: false,
   getJourney: null,
   categories: null,
-  getJourneyByIdLoading: false,
-  getJourneyByCategoryLoadingState: false,
-  getJourneyByCategory: null,
-  getCategories: null,
   deleteJourneyLoadingState: false,
   deleteJourney: null,
   updateJourneyLoading: false,
   updateJourney: null,
   journeys: null,
-  journeysByCategory: null,
-  journeyById: null,
 
 
 };
@@ -46,12 +40,12 @@ const userReducer = (state =initialState , action) => {
       ...state,
       createdJourney: action.createdJourney
     }
-  case "GET_JOURNEY_BY_USER_LOADING":
+  case "GET_JOURNEYS_LOADING":
     return {
       ...state,
       getJourneyLoadingState: action.getJourneyLoadingState
     }
-  case "GET_JOURNEY_BY_USER":
+  case "GET_JOURNEYS":
     return {
       ...state,
       journeys: action.journeys
@@ -76,45 +70,16 @@ const userReducer = (state =initialState , action) => {
       ...state,
       deleteJourney: action.deleteJourney
     }
-    case "GET_JOURNEY_BY_CATEGORY":
-      return {
-        ...state,
-        journeys: action.journeysByCategory.items
-      }
-    case "GET_JOURNEY_BY_CATEGORY_LOADING":
-      return {
-        ...state,
-        getJourneyByCategoryLoadingState : action.getJourneyByCategoryLoadingState
-      }
-    case "GET_CATEGORIES":
-      return {
-        ...state,
-        categories: action.categories
-      }
-    case "GET_CATEGORIES_LOADING":
-      return {
-        ...state,
-        getCategoriesLoading: action.getCategoriesLoading
-
-      }
-    case "ADD_CATEGORY":
-      return {
-        ...state,
-        categories: [...state.categories, {
-            category : action.category,
-          }]
-
-      }
-    case "GET_JOURNEY_BY_ID":
-      return {
-        ...state,
-        journeyById: action.journeyById
-      }
-    case "GET_JOURNEY_BY_ID_LOADING":
-      return {
-        ...state,
-        getJourneyByIdLoading: action.getJourneyByIdLoading
-      }
+  case "GET_JOURNEYS_BY_DATE":
+    return {
+      ...state,
+      journeysByDate: action.journeysByDate
+    }
+  case "GET_JOURNEYS_BY_DATE_LOADING":
+    return {
+      ...state,
+      getJourneyByDateLoadingState: action.getJourneyByDateLoadingState
+    }
   default:
     return state;
   }

@@ -1,11 +1,11 @@
 {
-    "httpMethod": "GET",
-    "path": "/user/3440274e-d39c-4621-81fe-b41fd72d27c1",
-    "queryStringParameters": {
-        "limit": "10"
-    },
+    "httpMethod": "POST",
+    "path": "/user/3440274e-d39c-4621-81fe-b41fd72d27c1/categories",
     "headers": {
         "Content-Type": "application/json"
+    },
+    "body": {
+        "category": "Isha"
     }
 
 

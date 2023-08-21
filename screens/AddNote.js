@@ -11,8 +11,10 @@ import {
   VStack,
   View,
 } from "native-base";
+import EmojiPicker from "rn-emoji-keyboard";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
+  Image,
   Pressable,
   SafeAreaView,
   StyleSheet,
@@ -24,12 +26,14 @@ import {
   RichToolbar,
 } from "react-native-pell-rich-editor";
 import Icon from "react-native-vector-icons/AntDesign";
-import moment from "moment";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import useAppContext from "../store/userContext";
-import Icon2 from "react-native-vector-icons/FontAwesome";
-import GradientView from "../components/ui/GradientView";
-
+import GradientView from "../components/GradientView";
+import Imagepicker from "../components/Imagepicker";
+import { Storage } from "aws-amplify";
+import { Calendar } from "react-native-calendars";
+import moment from "moment";
+import { formatDateObject } from "../utils/ui-utils";
 export default function AddNote() {
   const richText = useRef();
 
@@ -37,11 +41,6 @@ export default function AddNote() {
   const route = useRoute();
   const {
     createJourney,
-    addCategory,
-    getCategories,
-    categories,
-    getJourneyById,
-    journeyById,
     updateJourney,
     updateJourneyLoading,
     deleteJourney,
@@ -49,28 +48,28 @@ export default function AddNote() {
     getJourney,
   } = useAppContext();
   const [descHTML, setDescHTML] = useState("");
-  const [showDescError, setShowDescError] = useState(false);
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Personal");
-  const [date, setDate] = useState(moment().format("DD MMMM YYYY"));
-
+  const [date, setDate] = useState(formatDateObject(moment().format('YYYY-MM-DD')));
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const selectedJourney = route?.params?.selectedJourney;
-
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const initialRef = React.useRef(null);
-  const finalRef = React.useRef(null);
-  const [newCategory, setNewCategory] = useState("");
   const [selectedJourneyId, setSelectedJourneyId] = useState();
 
-  const [currentJourney, setCurrentJourney] = useState();
+  const [mood, setMood] = useState({
+    emoji: "😃",
+    name: "grinning face with big eyes",
+    slug: "grinning_face_with_big_eyes",
+    toneEnabled: false,
+    unicode_version: "0.6",
+  });
+  const [moodPickerVisible, setMoodPickerVisible] = useState(false);
+
+  const [image, setImage] = useState();
+  const [imageKey, setImageKey] = useState();
 
   useEffect(() => {
-    getCategories();
     if (route?.params?.selectedJourney) {
-      setCurrentJourney(selectedJourney);
       setTitle(selectedJourney.title);
       setDescHTML(selectedJourney?.descHTML);
-      setCategory(selectedJourney?.category);
       setSelectedJourneyId(selectedJourney.journeyId);
       if (selectedJourney.descHTML)
         richText.current?.setContentHTML(selectedJourney.descHTML);
@@ -80,8 +79,6 @@ export default function AddNote() {
     return () => {
       setDescHTML("");
       setTitle("");
-      setCategory("Personal");
-      setDate(moment().format("DD MMMM YYYY"));
     };
   }, [route]);
 
@@ -94,44 +91,50 @@ export default function AddNote() {
 
   const richTextHandle = (descriptionText) => {
     if (descriptionText) {
-      setShowDescError(false);
       setDescHTML(descriptionText);
     } else {
-      setShowDescError(true);
       setDescHTML("");
     }
   };
 
-  const submitContentHandle = () => {
+  const uploadImage = async (filename, img) => {
+    const res = await Storage.put(filename, img, {
+      contentType: "image/png",
+      level: "public",
+    });
+    console.log(res, "res");
+    await setImageKey(res.key);
+    return res.key;
+  };
+
+  const submitContentHandle = async () => {
     const replaceHTML = descHTML.replace(/<(.|\n)*?>/g, "").trim();
     const replaceWhiteSpace = replaceHTML.replace(/&nbsp;/g, "").trim();
 
     if (replaceWhiteSpace.length <= 0) {
-      setShowDescError(true);
+      return;
     } else {
       // send data to your server!
       const description = replaceWhiteSpace.slice(0, 100);
+      let imageUrl;
+      if (image?.filename && image?.file) {
+        imageUrl = await uploadImage(image.filename, image.file);
+      }
+
       createJourney(
         title,
         description,
         replaceWhiteSpace,
         descHTML,
-        category,
+        mood,
+        imageUrl,
+        date,
         () => {
           console.log("journey created");
         }
       );
     }
   };
-
-  // const handleClear = () => {
-  //   try {
-  //     console.log(richText.current)
-  //   }
-  //   catch (err) {
-  //     console.log(err)
-  //   }
-  // };
 
   const handleDelete = () => {
     deleteJourney(selectedJourneyId, date, () => {
@@ -142,7 +145,7 @@ export default function AddNote() {
 
   return (
     <GradientView>
-      <View px={5} mt={10} h="full" width="100%">
+      <View px={5} mt={8} h="full" width="100%">
         <HStack justifyContent="space-between" alignItems="center" w="full">
           <Icon
             name="arrowleft"
@@ -150,29 +153,19 @@ export default function AddNote() {
             color="#1A1D21"
             onPress={() => navigation.goBack()}
           />
-          <HStack space={3}>
+          <HStack space={3} alignItems="center">
+            <Imagepicker setImage={setImage} uploadImage={uploadImage} />
             <TouchableOpacity onPress={handleDelete}>
               <Icon name="delete" size={28} color="#1A1D21" />
             </TouchableOpacity>
-
-            <TouchableOpacity onPress={submitContentHandle}>
-              <Icon name="checkcircleo" size={28} color="#1A1D21" />
-            </TouchableOpacity>
+            <Button py={2} px={4} onPress={submitContentHandle} bg="#5a5190" >
+              <Text py={0} fontWeight="700" color="#f2f2f2">
+                Save
+              </Text>
+            </Button>
           </HStack>
         </HStack>
-        <View py={3}>
-          <Input
-            value={title}
-            onChangeText={setTitle}
-            p={0}
-            placeholder="Your Note Title "
-            borderRadius={0}
-            fontSize={30}
-            variant="unstyled"
-            fontFamily="mono"
-            fontWeight="700"
-            color="#1A1D21"
-          />
+        <View pt={3}>
           <HStack
             h="12"
             w="full"
@@ -180,48 +173,68 @@ export default function AddNote() {
             space={4}
             alignItems="center"
           >
-            {/* <Select 
-                selectedValue={category} 
-                borderWidth={0} 
-                dropdownIcon={
-                  <Icon2 name="circle" size={7} color="#1A1D21" />
-                }
-              
-                p="0" 
-                borderColor="white" w="20" fontSize={14} fontWeight="500" color="#717676" onValueChange={(itemValue) => {
-                  if (itemValue === "Add Category") {
-                    setModalVisible(true);
-                  }
-                  else {
-                    setCategory(itemValue)
-                  }
-                }} style={
-                  {
-                    borderWidth: 0,
-                    borderColor: "transparent",
-                  }
-                }  >
-                  {categories && categories.length && categories?.map((item, index) => (
-                    <Select.Item label={item?.category} fontSize={14} fontWeight="500" color="#717676"
-                      key={index}
-                      value={item?.category} />
-                  ))}
-                  <Select.Item   label="Add Category" fontSize={14} fontWeight="500" color="#717676" value="Add Category" >
-                <Icon name="pluscircle" size={30} color="#1A1D21" />
-                  </Select.Item>
-                </Select> */}
-            <Text
-              fontSize={14}
-              fontFamily="mono"
-              fontWeight="500"
-              flex={1}
-              color="#717676"
-            >
-              {date}
-            </Text>
+            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+              <HStack alignItems="center" space={3}>
+                <VStack>
+                  <Text fontWeight="700" fontSize="4xl" p={0} m={0}>
+                    {date.date}
+                  </Text>
+                  <View
+                    borderBottomWidth={6}
+                    borderBottomColor="#5a51906b"
+                    width="100%"
+                    position="absolute"
+                    bottom={1.5}
+                  />
+                </VStack>
+                <VStack position="relative" top={1}>
+                  <Text fontSize="xs" fontWeight="700">
+                    {date.month} {date.year}
+                  </Text>
+                  <Text fontSize="xs" fontWeight="700">{date.day}</Text>
+                </VStack>
+                <Icon name="caretdown" size={15} color="#1A1D21" />
+              </HStack>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setMoodPickerVisible(true)}>
+              <Text
+                color="#717676"
+                fontSize={27}
+                py={0.5}
+                px={1.5}
+                borderRadius={55}
+                bg="#b2aed1"
+              >
+                {mood?.emoji}
+              </Text>
+            </TouchableOpacity>
           </HStack>
+          <Input
+            value={title}
+            onChangeText={setTitle}
+            p={0}
+            pt={2}
+            placeholder="Title "
+            borderRadius={0}
+            fontSize='3xl'
+            variant="unstyled"
+            fontFamily="mono"
+            fontWeight="700"
+            color="#1A1D21"
+          />
         </View>
-
+        {image && (
+          <Image
+            source={{ uri: image.uri }}
+            style={{
+              width: "100%",
+              height: 200,
+              borderRadius: 10,
+              marginTop: 10,
+            }}
+          />
+        )}
+   
         <View style={styles.richTextContainer}>
           <ScrollView>
             <RichEditor
@@ -234,7 +247,6 @@ export default function AddNote() {
               editorStyle={{
                 color: "#1A1D21",
                 backgroundColor: "transparent",
-                padding: 20,
                 fontSize: 16,
                 lineHeight: 24,
               }}
@@ -259,54 +271,25 @@ export default function AddNote() {
           ]}
           style={styles.richTextToolbarStyle}
         />
-        {showDescError && (
-          <Text style={styles.errorTextStyle}>
-            Your content shouldn't be empty 🤔
-          </Text>
-        )}
       </View>
+      <EmojiPicker
+          onEmojiSelected={(e) => setMood(e)}
+          open={moodPickerVisible}
+          onClose={() => setMoodPickerVisible(false)}
+        />
       <Modal
-        isOpen={modalVisible}
-        onClose={() => setModalVisible(false)}
-        initialFocusRef={initialRef}
-        finalFocusRef={finalRef}
+        isOpen={showDatePicker}
+        onClose={() => setShowDatePicker(false)}
+        size="lg"
       >
-        <Modal.Content>
-          <Modal.CloseButton />
-          <Modal.Header>Add Category </Modal.Header>
-          <Modal.Body>
-            <FormControl>
-              <FormControl.Label>Category Name</FormControl.Label>
-              <Input
-                ref={initialRef}
-                value={newCategory}
-                onChangeText={setNewCategory}
-              />
-            </FormControl>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
-              <Button
-                variant="ghost"
-                colorScheme="blueGray"
-                onPress={() => {
-                  setModalVisible(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onPress={() => {
-                  setModalVisible(false);
-                  addCategory(newCategory);
-                  setCategory(newCategory);
-                }}
-              >
-                Add
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
+        {/* datepicker */}
+        <Calendar
+          onDayPress={(day) => {
+            console.log(day);
+            setDate(formatDateObject(day.dateString));
+            setShowDatePicker(false);
+          }}
+        />
       </Modal>
     </GradientView>
   );
@@ -348,7 +331,6 @@ const styles = StyleSheet.create({
     color: "#1A1D21",
     borderColor: "#c6c3b3",
     borderRadius: 10,
-    marginVertical: 10,
   },
 
   richTextToolbarStyle: {

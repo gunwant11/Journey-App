@@ -65,11 +65,6 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
-    },
-    "newtesting": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
     }
   },
   "parameters": {
@@ -88,25 +83,14 @@
           "resourceName": "journeyjs"
         }
       ]
-    },
-    "AMPLIFY_function_newtesting_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "newtesting"
-        }
-      ]
-    },
-    "AMPLIFY_function_newtesting_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "newtesting"
-        }
-      ]
     }
   },
   "storage": {
+    "journeyIMG": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
+    },
     "journeytable": {
       "providerPlugin": "awscloudformation",
       "service": "DynamoDB"

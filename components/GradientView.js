@@ -14,8 +14,6 @@ const GradientView = ({ style, children }) => {
             end={{ x: 0.7, y: 1 }}
         >
             <View style={style} >
-
-
                 {children}
             </View>
         </LinearGradient>

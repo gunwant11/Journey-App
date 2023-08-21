@@ -14,21 +14,8 @@
         ]
       }
     },
-    "/user/{userId}/categories": {
-      "name": "/user/{userId}/categories",
-      "lambdaFunction": "journeyjs",
-      "permissions": {
-        "setting": "private",
-        "auth": [
-          "create",
-          "read",
-          "update",
-          "delete"
-        ]
-      }
-    },
-    "/categories": {
-      "name": "/categories",
+    "/user/{userId}/journey": {
+      "name": "/user/{userId}/journey",
       "lambdaFunction": "journeyjs",
       "permissions": {
         "setting": "private",

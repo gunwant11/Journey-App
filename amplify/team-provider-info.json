@@ -17,16 +17,13 @@
         "newJourneyApp": {}
       },
       "storage": {
-        "journeytable": {}
+        "journeytable": {},
+        "journeyIMG": {}
       },
       "function": {
-        "newtesting": {
-          "deploymentBucketName": "amplify-newjourneyapp-dev-231323-deployment",
-          "s3Key": "amplify-builds/newtesting-7949345737736a55704c-build.zip"
-        },
         "journeyjs": {
           "deploymentBucketName": "amplify-newjourneyapp-dev-231323-deployment",
-          "s3Key": "amplify-builds/journeyjs-4a6c6874575148727942-build.zip"
+          "s3Key": "amplify-builds/journeyjs-5454484f6e43356b3345-build.zip"
         }
       },
       "api": {

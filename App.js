@@ -2,7 +2,7 @@ import { extendTheme, NativeBaseProvider,  } from "native-base";
 import React from 'react';
 import { Amplify, API } from 'aws-amplify'
 import awsconfig from './src/aws-exports.js'
-import Navigation from "./screens/Navigation";
+import Navigation from "./screens/navigation/Navigation.js";
 import { UserProvider } from "./store/userContext";
 import { useFonts } from 'expo-font';
 import { ActivityIndicator } from "react-native";
