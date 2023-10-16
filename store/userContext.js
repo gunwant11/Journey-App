@@ -108,7 +108,7 @@ export const UserProvider = ({children})=>{
       getJourneyLoading(false);
     }catch(err){
       getJourneyLoading(false)
-      console.log(err)
+      console.log(err, 'error')
     }
   }
 

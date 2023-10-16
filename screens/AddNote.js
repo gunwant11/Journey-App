@@ -1,12 +1,9 @@
 import {
-  Box,
   Button,
-  FormControl,
   HStack,
   Input,
   Modal,
   ScrollView,
-  Select,
   Text,
   VStack,
   View,
@@ -15,8 +12,6 @@ import EmojiPicker from "rn-emoji-keyboard";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   Image,
-  Pressable,
-  SafeAreaView,
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
@@ -259,7 +254,7 @@ export default function AddNote() {
         <RichToolbar
           editor={richText}
           selectedIconTint="#873c1e"
-          iconTint="#fff"
+          iconTint="#000"
           actions={[
             actions.setBold,
             actions.setItalic,
@@ -268,6 +263,7 @@ export default function AddNote() {
             actions.setStrikethrough,
             actions.setUnderline,
             actions.checkboxList,
+            actions.undo,
           ]}
           style={styles.richTextToolbarStyle}
         />
@@ -334,9 +330,10 @@ const styles = StyleSheet.create({
   },
 
   richTextToolbarStyle: {
-    backgroundColor: "#1A1D21",
+    backgroundColor: "#fff",
+    color: "#000",
     borderColor: "#c6c3b3",
-    borderRadius: 10,
+    borderRadius: 5,
     marginBottom: 20,
     position: "absolute",
     bottom: 80,

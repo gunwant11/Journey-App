@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React from "react";
 import {
   Box,
   ScrollView,
@@ -8,7 +8,6 @@ import {
 } from "native-base";
 import useAppContext from "../store/userContext";
 import { useEffect } from "react";
-import { TouchableOpacity } from "react-native";
 import NoteCard from "../components/NoteCard";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import GradientView from "../components/GradientView";
@@ -20,7 +19,7 @@ export const Journal = () => {
   const router = useRoute();
 
   useEffect(() => {
-      // getJourney();
+    getJourney();
   }, [router]);
 
   useEffect(() => {
@@ -32,19 +31,19 @@ export const Journal = () => {
     <GradientView>
       <View pt={8} h="full" width="100%">
         <Box px={5} w="full"  >
-            <Text
-              fontSize={30}
-              fontFamily="mono"
-              fontWeight="700"
-              color="#1A1D21"
-            >
-              My Journeys
-            </Text>
+          <Text
+            fontSize={30}
+            fontFamily="mono"
+            fontWeight="700"
+            color="#1A1D21"
+          >
+            My Journeys
+          </Text>
         </Box>
         <Box>
           <ScrollView>
             <VStack space={3} px={3} pt="5" w="full" pb={200}>
-              { journeys?.map((journey, index) => (
+              {journeys?.map((journey, index) => (
                 <NoteCard
                   journey={journey}
                   accentCard={false}

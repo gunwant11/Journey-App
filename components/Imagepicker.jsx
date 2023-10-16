@@ -18,7 +18,6 @@ const Imagepicker = ({setImage}) => {
             } else {
                 const response = await fetch(result.assets[0].uri);
                 const blob = await response.blob();
-                console.log(blob,'response')
                 const filename = result.uri.split('/').pop();
                 const imageObj = {
                     uri: result.assets[0].uri,

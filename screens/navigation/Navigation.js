@@ -191,8 +191,6 @@ const Navigation = () => {
             name="Profile"
             component={Profile}
           />
-          
-
         </Tab.Navigator>
       ) : (
         <Stack.Navigator
